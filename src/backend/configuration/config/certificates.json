@@ -1,0 +1,76 @@
+{
+    "app_management_zone_certificate": {
+        "logical_name": "SSLCertificateAppManagementZone",
+        "certificate_domain": "app-management-zone.[BASE_DOMAIN_NAME_PLACEHOLDER]",
+        "subject_alternative_names": [],
+        "certificate_region": "us-east-1",
+        "retain_certificate_on_in_use_failure": true,
+        "dns_zone_domain": "[BASE_DNS_ZONE_NAME_PLACEHOLDER]",
+        "dns_zone_role_arn": "[DNS_ROLE_ARN_PLACEHOLDER]",
+        "route53_hosted_zone_id": "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]",
+        "custom_resources": {
+            "acm-certificate-creator-and-validator": {
+                "logical_name": "CustomResourceCreateAndValidateCertificateAppManagementZone",
+                "resource_type": "Custom::ACMCertificateCreatorValidator",
+                "provider": "cfn-provider-create-and-validate-acm-certificates",
+                "depends_on": []
+            }
+        }
+    },
+    "resume_api_certificate": {
+        "logical_name": "SSLCertificateResumeAPI",
+        "certificate_domain": "api.[BASE_DOMAIN_NAME_PLACEHOLDER]",
+        "subject_alternative_names": [],
+        "certificate_region": "[DEPLOY_REGION_STRING]",
+        "retain_certificate_on_in_use_failure": true,
+        "dns_zone_domain": "[BASE_DNS_ZONE_NAME_PLACEHOLDER]",
+        "dns_zone_role_arn": "[DNS_ROLE_ARN_PLACEHOLDER]",
+        "route53_hosted_zone_id": "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]",
+        "custom_resources": {
+            "acm-certificate-creator-and-validator": {
+                "logical_name": "CustomResourceCreateAndValidateCertificateResumeAPI",
+                "resource_type": "Custom::ACMCertificateCreatorValidator",
+                "provider": "cfn-provider-create-and-validate-acm-certificates",
+                "depends_on": []
+            }
+        }
+    },
+    "resume_manager_certificate": {
+        "logical_name": "SSLCertificateResumeManagerAPI",
+        "certificate_domain": "app-management-api.[BASE_DOMAIN_NAME_PLACEHOLDER]",
+        "subject_alternative_names": [],
+        "certificate_region": "[DEPLOY_REGION_STRING]",
+        "retain_certificate_on_in_use_failure": true,
+        "dns_zone_domain": "[BASE_DNS_ZONE_NAME_PLACEHOLDER]",
+        "dns_zone_role_arn": "[DNS_ROLE_ARN_PLACEHOLDER]",
+        "route53_hosted_zone_id": "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]",
+        "custom_resources": {
+            "acm-certificate-creator-and-validator": {
+                "logical_name": "CustomResourceCreateAndValidateCertificateResumeManager",
+                "resource_type": "Custom::ACMCertificateCreatorValidator",
+                "provider": "cfn-provider-create-and-validate-acm-certificates",
+                "depends_on": []
+            }
+        }
+    },
+    "resume_website_certificate": {
+        "logical_name": "SSLCertificateResumeWebsite",
+        "certificate_domain": "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+        "subject_alternative_names": [
+            "www.[BASE_DOMAIN_NAME_PLACEHOLDER]"
+        ],
+        "certificate_region": "us-east-1",
+        "retain_certificate_on_in_use_failure": true,
+        "dns_zone_domain": "[BASE_DNS_ZONE_NAME_PLACEHOLDER]",
+        "dns_zone_role_arn": "[DNS_ROLE_ARN_PLACEHOLDER]",
+        "route53_hosted_zone_id": "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]",
+        "custom_resources": {
+            "acm-certificate-creator-and-validator": {
+                "logical_name": "CustomResourceCreateAndValidateCertificateResumeWebsite",
+                "resource_type": "Custom::ACMCertificateCreatorValidator",
+                "provider": "cfn-provider-create-and-validate-acm-certificates",
+                "depends_on": []
+            }
+        }
+    }
+}

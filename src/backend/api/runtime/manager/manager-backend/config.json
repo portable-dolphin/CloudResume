@@ -1,0 +1,14 @@
+{
+    "s3_region": "[S3_REGION_PLACEHOLDER]",
+    "s3_bucket_webpage": "[S3_BUCKET_WEBPAGE_PLACEHOLDER]",
+    "s3_bucket_webpage_resumes_location": "[S3_BUCKET_WEBPAGE_RESUMES_LOCATION_PLACEHOLDER]",
+    "s3_bucket_documents": "[S3_BUCKET_DOCUMENTS_PLACEHOLDER]",
+    "s3_bucket_documents_upload_location": "[S3_BUCKET_DOCUMENTS_UPLOAD_LOCATION_PLACEHOLDER]",
+    "s3_bucket_documents_parsed_location": "[S3_BUCKET_DOCUMENTS_PARSED_LOCATION_PLACEHOLDER]",
+    "dynamodb_table": "[DYNAMODB_RESUMES_TABLE_PLACEHOLDER]",
+    "dynamodb_table_region": "[DYNAMODB_REGION_PLACEHOLDER]",
+    "dynamodb_status_index": "[DYNAMODB_RESUMES_TABLE_STATE_ID_INDEX_PLACEHOLDER]",
+    "dynamodb_id_index": "[DYNAMODB_RESUMES_TABLE_ID_INDEX_PLACEHOLDER]",
+    "Access_Control_Allow_Credentials": "true",
+    "Access_Control_Allow_Origin": "[ACCESS_CONTROL_ALLOW_ORIGIN_PLACEHOLDER]"
+}

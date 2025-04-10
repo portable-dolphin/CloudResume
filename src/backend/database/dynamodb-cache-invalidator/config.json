@@ -1,0 +1,7 @@
+{
+    "dynamodb_table_name": "[DYNAMODB_RESUMES_TABLE_PLACEHOLDER]",
+    "dynamodb_table_region": "[DYNAMODB_REGION_PLACEHOLDER]",
+    "cloudfront_distribution_id": "[CLOUDFRONT_DISTRIBUTION_ID_PLACEHOLDER]",
+    "resumes_url_base": "[BASE_DOMAIN_URL_PLACEHOLDER]/resumes",
+    "resume_path": "/resumes"
+}

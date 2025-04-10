@@ -1,0 +1,11 @@
+*.swp
+.c9revisions
+.c9
+.py*
+*.zip
+__pycache__
+.pytest_cache
+*.egg-info
+.cdk.staging
+cdk.out
+.venv

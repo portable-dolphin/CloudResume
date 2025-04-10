@@ -1,0 +1,6 @@
+{
+    "client_id": "[COGNITO_CLIENT_ID_PLACEHOLDER]",
+    "userpool_id": "[COGNITO_USERPOOL_ID_PLACEHOLDER]",
+    "authorized_groups": [COGNITO_AUTHORIZED_GROUPS_ARRAY_PLACEHOLDER],
+    "redirect_url": "[REDIRECT_URL_PLACEHOLDER]"
+}

@@ -1,0 +1,78 @@
+{
+    "resume-static-documents": {
+        "logical_name": "S3BucketResumeStaticDocuments",
+        "versioned": true,
+        "event_notifications": [
+            {
+                "destination_type": "lambda",
+                "destination": {
+                    "function_name": "convert-resume-to-html",
+                    "function_alias": "latest_version"
+                },
+                "event_types": [
+                    "OBJECT_CREATED_COPY",
+                    "OBJECT_CREATED_POST",
+                    "OBJECT_CREATED_PUT"
+                ],
+                "prefix": "documents/",
+                "suffix": ".docx"
+            }
+        ],
+        "cors": [
+            {
+                "allowed_headers": [
+                    "*"
+                ],
+                "allowed_methods": [
+                    "PUT"
+                ],
+                "allowed_origins": [
+                    "[BASE_DOMAIN_URL_PLACEHOLDER]"
+                ],
+                "expose_headers": []
+            }
+        ],
+        "bucket_policy": "",
+        "encryption": "S3_MANAGED",
+        "block_public_access": {
+            "block_all": true
+        },
+        "enforce_ssl": true,
+        "retain_in_prod": true,
+        "post_deployment_custom_resources": {
+            "resume-static-documents-empty-bucket": {
+                "logical_name": "CustomResourceEmptyBucketResumeStaticDocuments",
+                "resource_type": "Custom::EmptyBucket",
+                "provider": "cfn-provider-empty-bucket",
+                "empty_on_prod": false,
+                "depends_on": [
+                    "S3BucketResumeStaticDocuments"
+                ]
+            }
+        }
+    },
+    "resume-static-webpage": {
+        "logical_name": "S3BucketResumeStaticWebpage",
+        "versioned": true,
+        "event_notifications": {},
+        "cors": [],
+        "bucket_policy": "Allow-Cloudfront-Get-Resume-Static-Webpage",
+        "encryption": "S3_MANAGED",
+        "block_public_access": {
+            "block_all": true
+        },
+        "enforce_ssl": true,
+        "retain_in_prod": false,
+        "post_deployment_custom_resources": {
+            "resume-static-webpage-empty-bucket": {
+                "logical_name": "CustomResourceEmptyBucketResumeStaticWebpage",
+                "resource_type": "Custom::EmptyBucket",
+                "provider": "cfn-provider-empty-bucket",
+                "empty_on_prod": false,
+                "depends_on": [
+                    "S3BucketResumeStaticWebpage"
+                ]
+            }
+        }
+    }
+}

@@ -1,0 +1,231 @@
+:root {
+    --white: #fff;
+    --verylightgray: #e6e6e6;
+    --darkblue: #1b4965;
+    --verylightblue: #b3d1ff;
+    --lightblue: #66a3ff;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    gap: 10px 5px;
+}
+
+body,
+#overlay {
+    height: 100%;
+}
+
+html {
+    background: var(--verylightgray);
+}
+
+#welcome-div {
+    margin: 20px auto;
+    text-align: center;
+    color: var(--white);
+    background: var(--darkblue);
+    padding: 15px;
+    width: fit-content;
+    display: none;
+}
+
+#status-div {
+    margin: 20px;
+    text-align: center;
+    color: darkred;
+}
+
+#company-header,
+#job-title-header {
+    width: 50%;
+}
+
+#job-posting-header,
+#resume-url-header,
+#date-created-header {
+    min-width: 180px;
+}
+
+#id-header {
+    min-width: 100px;
+}
+
+#views-header {
+    min-width: 75px;
+}
+
+button {
+    padding: 5px;
+}
+
+#table-div {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.table {
+    text-align: left;
+    table-layout: auto;
+    border-collapse: collapse;
+    margin: 10px auto;
+    height: 300px;
+    width: auto;
+    display: block;
+    overflow-x: auto;
+    overflow-y: scroll;
+    border: 1px solid var(--darkblue);
+}
+
+.table thead tr {
+    position: sticky;
+    top: 0px;
+}
+
+td {
+    height: auto;
+}
+
+.table,
+.table tr {
+    background: var(--white);
+}
+
+.table th,
+.table tbody td {
+    padding: 10px 10px;
+}
+
+.table th {
+    color: var(--white);
+    background: var(--darkblue);
+}
+
+.table tbody tr:not(:first-child) td {
+    border-top: 1px solid var(--darkblue);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: 1px solid var(--darkblue);
+}
+
+.inputs-and-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.input-group {
+    width: 100%;
+}
+
+label {
+    align-self: center;
+}
+
+input {
+    width: 100%;
+}
+
+#modify-add-item-outer {
+    display: none;
+    flex-direction: column;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid var(--darkblue);
+    width: 80%;
+}
+
+.modify-add-item-inner-inputs {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 160px 5fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+#inputs-info-paragraph {
+    color: darkred;
+}
+
+#resume-upload-div {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.resume-upload-buttons {
+    margin-left: 5px;
+    min-width: fit-content;
+}
+
+.modify-add-item-inner-buttons {
+    display: flex;
+}
+
+.modify-item,
+.add-item,
+.resume-view-deleted {
+    display: flex;
+    flex-direction: row;
+}
+
+.modifying-row {
+    animation: flash 3s infinite !important;
+}
+
+@keyframes flash{
+    0% {
+        background: var(--verylightblue);
+    }
+    50% {
+        background: var(--lightblue);
+    }
+    100% {
+        background: var(--verylightblue);
+    }
+}
+
+.button-group {
+    display: flex;
+    flex-direction: row;
+}
+
+.resume-view-deleted {
+    display: none;
+}
+
+#confirm-div-overlay {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.75);
+}
+
+#confirm-div {
+    position: relative;
+    width: 50%;
+    height: fit-content;
+    left: 25%;
+    top: 10%;
+    text-align: center;
+    background: var(--verylightgray);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    padding: 20px 0px;
+}
+
+#confirm-buttons-div {
+    display: block;
+    align-self: center;
+}
+
+#confirm-buttons {
+    width: 50px;
+}

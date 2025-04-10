@@ -1,0 +1,332 @@
+{
+    "facades": {
+        "api_gateway_manager": {
+            "logical_name": "MonitoringFacadeApiGatewayManager",
+            "region": "[DEPLOY_REGION_STRING]",
+            "type": "api_gateway",
+            "alarm_defaults": {
+                "alarm_name_prefix": "API_Gateway_Manager",
+                "action_type": "sns_topic",
+                "action": {
+                    "on_alarm_topic": "api_gateway_errors"
+                }
+            },
+            "facade_parts": [
+                {
+                    "type": "header",
+                    "config": {
+                        "type": "large",
+                        "text": "API Gateway Manager Overview"
+                    }
+                },
+                {
+                    "type": "monitor",
+                    "config": {
+                        "monitored_resource_logical_name": "ResumeManagerApi",
+                        "metric_category": "by_api_name",
+                        "alarm_friendly_name": "api-gateway-manager",
+                        "human_readable_name": "API Gateway Manager",
+                        "fill_tps_with_zeroes": true,
+                        "add_to_alarm_dashboard": true,
+                        "predefined_alarms": [
+                            {
+                                "error_name": "add5_xx_fault_rate_alarm",
+                                "logical_name_suffix": "manager_overview_internal_error",
+                                "threshold_details": {
+                                    "threshold_type": "ErrorRateThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_error_rate",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_high_tps_alarm",
+                                "logical_name_suffix": "manager_overview_high_concurrent_use",
+                                "threshold_details": {
+                                    "threshold_type": "HighTpsThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_tps",
+                                            "value": 20
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_latency_p90_alarm",
+                                "logical_name_suffix": "manager_overview_latency_p90",
+                                "threshold_details": {
+                                    "threshold_type": "LatencyThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_latency",
+                                            "value": "PT5S"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "header",
+                    "config": {
+                        "type": "large",
+                        "text": "API Gateway Manager By Method"
+                    }
+                },
+                {
+                    "type": "monitor",
+                    "config": {
+                        "monitored_resource_logical_name": "ResumeManagerApi",
+                        "metric_category": "by_api_name",
+                        "alarm_friendly_name": "api-gateway-manager",
+                        "human_readable_name": "API Gateway Manager",
+                        "alarm_strategy_override": "NoopAlarmActionStrategy",
+                        "alarm_strategy_config": {},
+                        "fill_tps_with_zeroes": true,
+                        "add_to_alarm_dashboard": true,
+                        "predefined_alarms": [
+                            {
+                                "error_name": "add5_xx_fault_rate_alarm",
+                                "logical_name_suffix": "manager_method_internal_error",
+                                "threshold_details": {
+                                    "threshold_type": "ErrorRateThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_error_rate",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_high_tps_alarm",
+                                "logical_name_suffix": "manager_method_high_concurrent_use",
+                                "threshold_details": {
+                                    "threshold_type": "HighTpsThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_tps",
+                                            "value": 20
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_latency_p90_alarm",
+                                "logical_name_suffix": "manager_method_latency_p90",
+                                "threshold_details": {
+                                    "threshold_type": "LatencyThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_latency",
+                                            "value": "PT5S"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "api_gateway_resume": {
+            "logical_name": "MonitoringFacadeApiGatewayResume",
+            "region": "[DEPLOY_REGION_STRING]",
+            "type": "api_gateway",
+            "alarm_defaults": {
+                "alarm_name_prefix": "API_Gateway_Resume",
+                "action_type": "sns_topic",
+                "action": {
+                    "on_alarm_topic": "api_gateway_errors"
+                }
+            },
+            "facade_parts": [
+                {
+                    "type": "header",
+                    "config": {
+                        "type": "large",
+                        "text": "API Gateway Resume Overview"
+                    }
+                },
+                {
+                    "type": "monitor",
+                    "config": {
+                        "monitored_resource_logical_name": "ResumeApi",
+                        "metric_category": "by_method",
+                        "alarm_friendly_name": "api-gateway-resumes",
+                        "human_readable_name": "API Gateway Resumes",
+                        "fill_tps_with_zeroes": true,
+                        "add_to_alarm_dashboard": true,
+                        "predefined_alarms": [
+                            {
+                                "error_name": "add5_xx_fault_rate_alarm",
+                                "logical_name_suffix": "resume_overview_internal_error",
+                                "threshold_details": {
+                                    "threshold_type": "ErrorRateThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_error_rate",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_high_tps_alarm",
+                                "logical_name_suffix": "resume_overview_high_concurrent_use",
+                                "threshold_details": {
+                                    "threshold_type": "HighTpsThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_tps",
+                                            "value": 20
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_latency_p90_alarm",
+                                "logical_name_suffix": "resume_overview_latency_p90",
+                                "threshold_details": {
+                                    "threshold_type": "LatencyThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_latency",
+                                            "value": "PT3S"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "header",
+                    "config": {
+                        "type": "large",
+                        "text": "API Gateway Resume By Method"
+                    }
+                },
+                {
+                    "type": "monitor",
+                    "config": {
+                        "monitored_resource_logical_name": "ResumeApi",
+                        "metric_category": "by_method",
+                        "alarm_friendly_name": "api-gateway-resumes",
+                        "human_readable_name": "API Gateway Resumes",
+                        "alarm_strategy_override": "NoopAlarmActionStrategy",
+                        "alarm_strategy_config": {},
+                        "fill_tps_with_zeroes": true,
+                        "add_to_alarm_dashboard": true,
+                        "predefined_alarms": [
+                            {
+                                "error_name": "add5_xx_fault_rate_alarm",
+                                "logical_name_suffix": "resume_method_internal_error",
+                                "threshold_details": {
+                                    "threshold_type": "ErrorRateThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_error_rate",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_high_tps_alarm",
+                                "logical_name_suffix": "resume_method_high_concurrent_use",
+                                "threshold_details": {
+                                    "threshold_type": "HighTpsThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_tps",
+                                            "value": 20
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_latency_p90_alarm",
+                                "logical_name_suffix": "resume_method_latency_p90",
+                                "threshold_details": {
+                                    "threshold_type": "LatencyThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_latency",
+                                            "value": "PT3S"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "website_distribution": {
+            "logical_name": "MonitoringFacadeCloudfrontWebsite",
+            "region": "us-east-1",
+            "type": "cloudfront",
+            "alarm_defaults": {
+                "alarm_name_prefix": "Cloudfront_Website",
+                "action_type": "sns_topic",
+                "action": {
+                    "on_alarm_topic": "cloud_front_errors"
+                }
+            },
+            "facade_parts": [
+                {
+                    "type": "header",
+                    "config": {
+                        "type": "large",
+                        "text": "Cloudfront Website Distribution"
+                    }
+                },
+                {
+                    "type": "monitor",
+                    "config": {
+                        "monitored_resource_logical_name": "CloudfrontDistributionResumeWebsite",
+                        "metric_category": "per_distribution",
+                        "alarm_friendly_name": "webpage-distributuin",
+                        "human_readable_name": "Resume Website",
+                        "fill_tps_with_zeroes": true,
+                        "add_to_alarm_dashboard": true,
+                        "predefined_alarms": [
+                            {
+                                "error_name": "add_fault5xx_rate",
+                                "logical_name_suffix": "resume_website_overview_internal_error",
+                                "threshold_details": {
+                                    "threshold_type": "ErrorRateThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_error_rate",
+                                            "value": 1
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "error_name": "add_high_tps_alarm",
+                                "logical_name_suffix": "resume_website_overview_high_concurrent_use",
+                                "threshold_details": {
+                                    "threshold_type": "HighTpsThreshold",
+                                    "threshold_arguments": [
+                                        {
+                                            "name": "max_tps",
+                                            "value": 50
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,12 @@
+attrs<=25.0
+beautifulsoup4>=4.13.3
+filelock>=3.18.0
+pytest>=8.3.4
+pytest-xdist>=3.6.1
+python-benedict>=0.34.0
+requests>=2.32.3
+selenium>=4.28.1
+pytest-timeout>=2.3.1
+pytest-rerunfailures>=15.0
+boto3>=1.35.68
+botocore>=1.35.68

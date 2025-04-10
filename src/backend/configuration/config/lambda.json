@@ -1,0 +1,617 @@
+{
+    "authorize-management-zone-api-gateway": {
+        "logical_name": "LambdaFunctionAuthorizeManagementZoneApiGateway",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT10S"
+            },
+            "permissions": {
+                "execution_role": "AuthorizeManagementZoneRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "NODEJS_22_X",
+            "handler": "index.apiHandler"
+        },
+        "version": {
+            "create_version": true,
+            "version_options": {
+                "description": ""
+            }
+        },
+        "alias": {
+            "create_alias": true,
+            "name": "latest_version",
+            "description": "",
+            "version": "latest_version"
+        },
+        "code_directory": "src/backend/api/runtime/manager/authorizers/authorize-management-zone-api-gateway",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {
+            "placeholder-replacer-authorize-management-zone-api-gateway": {
+                "logical_name": "CustomResourceReplacePlaceholdersAuthorizeManagementZoneApiGateway",
+                "resource_type": "Custom::LambdaPlaceholderReplacer",
+                "provider": "cfn-provider-update-lambda-function-placeholders",
+                "files_with_placeholders": [
+                    "common/config.json"
+                ],
+                "depends_on": [
+                    "LambdaFunctionAuthorizeManagementZoneApiGateway"
+                ]
+            }
+        }
+    },
+    "authorize-management-zone": {
+        "logical_name": "LambdaFunctionAuthorizeManagementZone",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT5S"
+            },
+            "permissions": {
+                "execution_role": "AuthorizeManagementZoneRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "NODEJS_22_X",
+            "handler": "index.cfHandler"
+        },
+        "version": {
+            "create_version": true,
+            "version_options": {
+                "description": ""
+            }
+        },
+        "alias": {
+            "create_alias": true,
+            "name": "latest_version",
+            "description": "",
+            "version": "latest_version"
+        },
+        "code_directory": "src/backend/webapp/lambda@edge/authorize-management-zone",
+        "allow_cross_stack_references": false,
+        "removal_policy": "RETAIN",
+        "post_deployment_custom_resources": {
+            "placeholder-replacer-authorize-management-zone": {
+                "logical_name": "CustomResourceReplacePlaceholdersAuthorizeManagementZone",
+                "resource_type": "Custom::LambdaPlaceholderReplacer",
+                "provider": "cfn-provider-update-lambda-function-placeholders",
+                "files_with_placeholders": [
+                    "common/config.json"
+                ],
+                "depends_on": [
+                    "LambdaFunctionAuthorizeManagementZone"
+                ]
+            }
+        }
+    },
+    "cfn-check-acm-certificate-validation-status": {
+        "logical_name": "LambdaFunctionCfnCheckAcmCertificateValidationStatus",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT30S"
+            },
+            "permissions": {
+                "execution_role": "CFNCheckACMCertificateStatusRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/configuration/functions/cfn-check-acm-certificate-validation-status",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "cfn-cloudfront-function-redirect-placeholders": {
+        "logical_name": "LambdaFunctionCfnCloudfrontFunctionRedirectPlaceholders",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT45S"
+            },
+            "permissions": {
+                "execution_role": "CFNCloudFrontFunctionChangesRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/configuration/functions/cfn-cloudfront-function-redirect-placeholders",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "cfn-create-and-validate-acm-certificates": {
+        "logical_name": "LambdaFunctionCfnCreateAndValidateAcmCertificates",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT4M"
+            },
+            "permissions": {
+                "execution_role": "CFNCreateAndValidateACMCertificates"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/configuration/functions/cfn-create-and-validate-acm-certificates",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "cfn-create-dns-records": {
+        "logical_name": "LambdaFunctionCfnCreateDnsRecords",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT8M"
+            },
+            "permissions": {
+                "execution_role": "CFNCreateDNSRecords"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/configuration/functions/cfn-create-dns-records",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "cfn-empty-bucket": {
+        "logical_name": "LambdaFunctionCfnEmptyBucket",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT150S"
+            },
+            "permissions": {
+                "execution_role": "CFNEmptyBucket"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/configuration/functions/cfn-empty-bucket",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "cfn-update-api-gateway-lambda-integration-versions": {
+        "logical_name": "LambdaFunctionCfnUpdateApiGatewayLambdaIntegrationVersions",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT45S"
+            },
+            "permissions": {
+                "execution_role": "CFNAPIUpdateIntegrationBackend"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/configuration/functions/cfn-update-api-gateway-lambda-backend-versions",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "cfn-update-cloudfront-behavior-edge-lambda-version": {
+        "logical_name": "LambdaFunctionCfnCloudfrontBehaviorEdgeLambdaVersion",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT15M"
+            },
+            "permissions": {
+                "execution_role": "CFNCloudFrontUpdateDistribution"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/configuration/functions/cfn-update-cloudfront-behavior-edge-lambda-version",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "cfn-update-lambda-function-placeholders": {
+        "logical_name": "LambdaFunctionCfnUpdateLambdaFunctionPlaceholders",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 512,
+                "ephemeral_storage": 512,
+                "timeout": "PT45S"
+            },
+            "permissions": {
+                "execution_role": "CFNLambdaCodeChangesRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/configuration/functions/cfn-update-lambda-function-placeholders",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "cloudfront-cache-invalidator": {
+        "logical_name": "LambdaFunctionCloudfrontCacheInvalidator",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT600S"
+            },
+            "permissions": {
+                "execution_role": "CloudfrontCacheInvalidator"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": true,
+            "version_options": {
+                "description": ""
+            }
+        },
+        "alias": {
+            "create_alias": true,
+            "name": "latest_version",
+            "description": "",
+            "version": "latest_version"
+        },
+        "code_directory": "src/backend/database/dynamodb-cache-invalidator",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {
+            "placeholder-replacer-cloudfront-cache-invalidator": {
+                "logical_name": "CustomResourceReplacePlaceholdersCloudfrontCacheInvalidator",
+                "resource_type": "Custom::LambdaPlaceholderReplacer",
+                "provider": "cfn-provider-update-lambda-function-placeholders",
+                "files_with_placeholders": [
+                    "config.json"
+                ],
+                "depends_on": [
+                    "LambdaFunctionCloudfrontCacheInvalidator"
+                ]
+            }
+        }
+    },
+    "convert-resume-to-html": {
+        "logical_name": "LambdaFunctionConvertResumeToHtml",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 512,
+                "ephemeral_storage": 512,
+                "timeout": "PT30S"
+            },
+            "permissions": {
+                "execution_role": "ConvertResumeToHtmlRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "NODEJS_22_X",
+            "handler": "index.handler"
+        },
+        "version": {
+            "create_version": true,
+            "version_options": {
+                "description": ""
+            }
+        },
+        "alias": {
+            "create_alias": true,
+            "name": "latest_version",
+            "description": "",
+            "version": "latest_version"
+        },
+        "code_directory": "src/backend/webapp/buckets/event_notifications/convert-resume-to-html",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {
+            "placeholder-replacer-convert-resume-to-html": {
+                "logical_name": "CustomResourceReplacePlaceholdersConvertResumeToHtml",
+                "resource_type": "Custom::LambdaPlaceholderReplacer",
+                "provider": "cfn-provider-update-lambda-function-placeholders",
+                "files_with_placeholders": [
+                    "config.json"
+                ],
+                "depends_on": [
+                    "LambdaFunctionConvertResumeToHtml"
+                ]
+            }
+        }
+    },
+    "manager-backend": {
+        "logical_name": "LambdaFunctionManagerBackend",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT10S"
+            },
+            "permissions": {
+                "execution_role": "LambdaManagerBackendRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": true,
+            "version_options": {
+                "description": ""
+            }
+        },
+        "alias": {
+            "create_alias": true,
+            "name": "latest_version",
+            "description": "",
+            "version": "latest_version"
+        },
+        "code_directory": "src/backend/api/runtime/manager/manager-backend",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {
+            "placeholder-replacer-manager-backend": {
+                "logical_name": "CustomResourceReplacePlaceholdersManagerBackend",
+                "resource_type": "Custom::LambdaPlaceholderReplacer",
+                "provider": "cfn-provider-update-lambda-function-placeholders",
+                "files_with_placeholders": [
+                    "config.json"
+                ],
+                "depends_on": [
+                    "LambdaFunctionManagerBackend"
+                ]
+            }
+        }
+    },
+    "post-authentication-trigger": {
+        "logical_name": "LambdaFunctionPostAuthenticationTrigger",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT10S"
+            },
+            "permissions": {
+                "execution_role": "CognitoSendEmailAfterAuthenticationRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/userstore/triggers/post-authentication-trigger",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {
+            "placeholder-replacer-post-authentication-trigger": {
+                "logical_name": "CustomResourceReplacePlaceholdersPostAuthenticationTrigger",
+                "resource_type": "Custom::LambdaPlaceholderReplacer",
+                "provider": "cfn-provider-update-lambda-function-placeholders",
+                "files_with_placeholders": [
+                    "config.json"
+                ],
+                "depends_on": [
+                    "LambdaFunctionPostAuthenticationTrigger"
+                ]
+            }
+        }
+    },
+    "pre-token-generation-trigger": {
+        "logical_name": "LambdaFunctionPreTokenGenerationTrigger",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT3S"
+            },
+            "permissions": {
+                "execution_role": "CognitoPreTokenGenerationAddAttributesRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "NODEJS_22_X",
+            "handler": "index.handler"
+        },
+        "version": {
+            "create_version": false
+        },
+        "alias": {
+            "create_alias": false
+        },
+        "code_directory": "src/backend/userstore/triggers/pre-token-generation-trigger",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {}
+    },
+    "resume-backend": {
+        "logical_name": "LambdaFunctionResumeBackend",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT10S"
+            },
+            "permissions": {
+                "execution_role": "LambdaResumeBackendRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "PYTHON_3_13",
+            "handler": "main.handler"
+        },
+        "version": {
+            "create_version": true,
+            "version_options": {
+                "description": ""
+            }
+        },
+        "alias": {
+            "create_alias": true,
+            "name": "latest_version",
+            "description": "",
+            "version": "latest_version"
+        },
+        "code_directory": "src/backend/api/runtime/resume-backend",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {
+            "placeholder-replacer-resume-backend": {
+                "logical_name": "CustomResourceReplacePlaceholdersResumeBackend",
+                "resource_type": "Custom::LambdaPlaceholderReplacer",
+                "provider": "cfn-provider-update-lambda-function-placeholders",
+                "files_with_placeholders": [
+                    "config.json"
+                ],
+                "depends_on": [
+                    "LambdaFunctionResumeBackend"
+                ]
+            }
+        }
+    },
+    "verify-management-zone-tokens": {
+        "logical_name": "LambdaFunctionVerifyManagementZoneTokens",
+        "revision_id": "1",
+        "configuration": {
+            "general": {
+                "description": "",
+                "memory": 128,
+                "ephemeral_storage": 512,
+                "timeout": "PT10S"
+            },
+            "permissions": {
+                "execution_role": "AuthorizeManagementZoneRole"
+            }
+        },
+        "runtime_settings": {
+            "runtime": "NODEJS_22_X",
+            "handler": "index.handler"
+        },
+        "version": {
+            "create_version": true,
+            "version_options": {
+                "description": ""
+            }
+        },
+        "alias": {
+            "create_alias": true,
+            "name": "latest_version",
+            "description": "",
+            "version": "latest_version"
+        },
+        "code_directory": "src/backend/api/runtime/manager/authorizers/verify-management-zone-tokens",
+        "allow_cross_stack_references": false,
+        "post_deployment_custom_resources": {
+            "placeholder-replacer-verify-management-zone-tokens": {
+                "logical_name": "CustomResourceReplacePlaceholdersVerifyManagementZoneTokens",
+                "resource_type": "Custom::LambdaPlaceholderReplacer",
+                "provider": "cfn-provider-update-lambda-function-placeholders",
+                "files_with_placeholders": [
+                    "common/config.json"
+                ],
+                "depends_on": [
+                    "LambdaFunctionVerifyManagementZoneTokens"
+                ]
+            }
+        }
+    }
+}

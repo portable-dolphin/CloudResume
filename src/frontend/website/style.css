@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  background:  #fcf3cf;
+  }
+
+@font-face {
+  font-family: 'Georgia';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Georgia'), url('./fonts/georgia.woff') format('woff');
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+}
+
+h2 {
+  font-size: 2em;
+  line-height: 2em;
+}

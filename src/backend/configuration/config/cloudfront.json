@@ -1,0 +1,399 @@
+{
+    "distributions": {
+        "resume-website": {
+            "logical_name": "CloudfrontDistributionResumeWebsite",
+            "general": {
+                "cnames": [
+                    "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "www.[BASE_DOMAIN_NAME_PLACEHOLDER]"
+                ],
+                "certificate": "resume_website_certificate",
+                "default_root_object": "index.html",
+                "price_class": "PRICE_CLASS_100",
+                "dns_recordset": "resume_website",
+                "depends_on": [
+                    "CustomResourceCreateAndValidateCertificateResumeWebsite"
+                ]
+            },
+            "logging": {
+                "enable_logging": false
+            },
+            "error_responses": [
+                {
+                    "http_status": 403,
+                    "response_http_status": 404,
+                    "response_page_path": "[CLOUDFRONT_CUSTOM_ERROR_404_PATH_PLACEHOLDER]",
+                    "ttl": "PT10S"
+                }
+            ],
+            "origins": {
+                "resume-static-webpage" : {
+                    "origin_type": "S3BucketOriginWithOAC",
+                    "bucket_name": "resume-static-webpage",
+                    "origin_path": "/"
+                }
+            },
+            "origin_groups": {},
+            "default_behavior": {
+                "origin": {
+                    "origin_group": false,
+                    "name": "resume-static-webpage"
+                },
+                "viewer_protocol_policy": "REDIRECT_TO_HTTPS",
+                "allowed_http_methods": "ALLOW_GET_HEAD",
+                "cache_policy": {
+                    "aws_managed": true,
+                    "name": "CACHING_OPTIMIZED"
+                },
+                "origin_request_policy": {},
+                "response_headers_policy": {},
+                "functions": {
+                    "VIEWER_REQUEST": {
+                        "type": "cloudfront",
+                        "function_name": "resume-app-redirect-to-www",
+                        "include_body": false
+                    }
+                }
+            },
+            "additional_behaviors": [
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/management-zone/manager/*.js",
+                    "viewer_protocol_policy": "HTTPS_ONLY",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "origin_request_policy": {},
+                    "response_headers_policy": {
+                        "aws_managed": false,
+                        "name": "replace_content_type_header_with_text_js"
+                    },
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "EdgeLambda",
+                            "function_name": "authorize-management-zone",
+                            "version": "LATEST",
+                            "include_body": false,
+                            "post_deployment_custom_resources": {
+                                "cloudfront-additional-behavior-edge-lambda-version-authorize-management-zone": {
+                                    "logical_name": "CustomResourceUpdateCFBehaviorEdgeAuthorizeManagementZone",
+                                    "resource_type": "Custom::CloudFrontBehaviorEdgeLambdaUpdater",
+                                    "provider": "cfn-provider-update-cloudfront-behavior-edge-lambda-version",
+                                    "is_default_cache_behavior": false,
+                                    "depends_on": [
+                                        "CustomResourceReplacePlaceholdersAuthorizeManagementZone"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/management-zone/manager/*.css",
+                    "viewer_protocol_policy": "HTTPS_ONLY",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "origin_request_policy": {},
+                    "response_headers_policy": {
+                        "aws_managed": false,
+                        "name": "replace_content_type_header_with_text_css"
+                    },
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "EdgeLambda",
+                            "function_name": "authorize-management-zone",
+                            "version": "LATEST",
+                            "include_body": false,
+                            "post_deployment_custom_resources": {
+                                "cloudfront-additional-behavior-edge-lambda-version-authorize-management-zone": {
+                                    "logical_name": "CustomResourceUpdateCFBehaviorEdgeAuthorizeManagementZone",
+                                    "resource_type": "Custom::CloudFrontBehaviorEdgeLambdaUpdater",
+                                    "provider": "cfn-provider-update-cloudfront-behavior-edge-lambda-version",
+                                    "is_default_cache_behavior": false,
+                                    "depends_on": [
+                                        "CustomResourceReplacePlaceholdersAuthorizeManagementZone"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/management-zone/manager/*.html",
+                    "viewer_protocol_policy": "HTTPS_ONLY",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "origin_request_policy": {},
+                    "response_headers_policy": {
+                        "aws_managed": false,
+                        "name": "replace_content_type_header_with_text_html"
+                    },
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "EdgeLambda",
+                            "function_name": "authorize-management-zone",
+                            "version": "LATEST",
+                            "include_body": false,
+                            "post_deployment_custom_resources": {
+                                "cloudfront-additional-behavior-edge-lambda-version-authorize-management-zone": {
+                                    "logical_name": "CustomResourceUpdateCFBehaviorEdgeAuthorizeManagementZone",
+                                    "resource_type": "Custom::CloudFrontBehaviorEdgeLambdaUpdater",
+                                    "provider": "cfn-provider-update-cloudfront-behavior-edge-lambda-version",
+                                    "is_default_cache_behavior": false,
+                                    "depends_on": [
+                                        "CustomResourceReplacePlaceholdersAuthorizeManagementZone"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/management-zone/manager/*",
+                    "viewer_protocol_policy": "HTTPS_ONLY",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "response_headers_policy": {},
+                    "origin_request_policy": {},
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "EdgeLambda",
+                            "function_name": "authorize-management-zone",
+                            "version": "LATEST",
+                            "include_body": false,
+                            "post_deployment_custom_resources": {
+                                "cloudfront-additional-behavior-edge-lambda-version-authorize-management-zone": {
+                                    "logical_name": "CustomResourceUpdateCFBehaviorEdgeAuthorizeManagementZone",
+                                    "resource_type": "Custom::CloudFrontBehaviorEdgeLambdaUpdater",
+                                    "provider": "cfn-provider-update-cloudfront-behavior-edge-lambda-version",
+                                    "depends_on": [
+                                        "CustomResourceReplacePlaceholdersAuthorizeManagementZone"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/*.js",
+                    "viewer_protocol_policy": "REDIRECT_TO_HTTPS",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "origin_request_policy": {},
+                    "response_headers_policy": {
+                        "aws_managed": false,
+                        "name": "replace_content_type_header_with_text_js"
+                    },
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "cloudfront",
+                            "function_name": "resume-app-redirect-to-www",
+                            "include_body": false
+                        }
+                    }
+                },
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/*.css",
+                    "viewer_protocol_policy": "REDIRECT_TO_HTTPS",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "origin_request_policy": {},
+                    "response_headers_policy": {
+                        "aws_managed": false,
+                        "name": "replace_content_type_header_with_text_css"
+                    },
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "cloudfront",
+                            "function_name": "resume-app-redirect-to-www",
+                            "include_body": false
+                        }
+                    }
+                },
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/*.woff",
+                    "viewer_protocol_policy": "REDIRECT_TO_HTTPS",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "origin_request_policy": {},
+                    "response_headers_policy": {
+                        "aws_managed": false,
+                        "name": "replace_content_type_header_with_font_woff"
+                    },
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "cloudfront",
+                            "function_name": "resume-app-redirect-to-www",
+                            "include_body": false
+                        }
+                    }
+                },
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/*.html",
+                    "viewer_protocol_policy": "REDIRECT_TO_HTTPS",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "origin_request_policy": {},
+                    "response_headers_policy": {
+                        "aws_managed": false,
+                        "name": "replace_content_type_header_with_text_html"
+                    },
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "cloudfront",
+                            "function_name": "resume-app-redirect-to-www",
+                            "include_body": false
+                        }
+                    }
+                },
+                {
+                    "origin": {
+                        "origin_group": false,
+                        "name": "resume-static-webpage"
+                    },
+                    "path_pattern": "/*",
+                    "viewer_protocol_policy": "REDIRECT_TO_HTTPS",
+                    "allowed_http_methods": "ALLOW_GET_HEAD",
+                    "cache_policy": {
+                        "aws_managed": true,
+                        "name": "CACHING_OPTIMIZED"
+                    },
+                    "origin_request_policy": {},
+                    "response_headers_policy": {},
+                    "functions": {
+                        "VIEWER_REQUEST": {
+                            "type": "cloudfront",
+                            "function_name": "resume-app-redirect-to-www",
+                            "include_body": false
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "policies": {
+        "origin_request": {
+            "require_authentication_cookies": {
+                "logical_name": "CloudfrontPolicyOriginRequestTequireAuthenticationCookies",
+                "cookie_behavior": "allow_list",
+                "cookies": [
+                    "access_token",
+                    "refresh_token",
+                    "id_token"
+                ]
+            }
+        },
+        "response_header": {
+            "replace_content_type_header_with_font_woff": {
+                "logical_name": "CloudfrontPolicyResponseHeaderReplaceContentTypeHeaderWithFontWoff",
+                "custom_headers": [
+                    {
+                        "header": "Content-Type",
+                        "value": "font/woff",
+                        "override": true
+                    }
+                ]
+            },
+            "replace_content_type_header_with_text_html": {
+                "logical_name": "CloudfrontPolicyResponseHeaderReplaceContentTypeHeaderWithTextHtml",
+                "custom_headers": [
+                    {
+                        "header": "Content-Type",
+                        "value": "text/html",
+                        "override": true
+                    }
+                ]
+            },
+            "replace_content_type_header_with_text_css": {
+                "logical_name": "CloudfrontPolicyResponseHeaderReplaceContentTypeHeaderWithTextCss",
+                "custom_headers": [
+                    {
+                        "header": "Content-Type",
+                        "value": "text/css",
+                        "override": true
+                    }
+                ]
+            },
+            "replace_content_type_header_with_text_js": {
+                "logical_name": "CloudfrontPolicyResponseHeaderReplaceContentTypeHeaderWithTextJs",
+                "custom_headers": [
+                    {
+                        "header": "Content-Type",
+                        "value": "text/javascript",
+                        "override": true
+                    }
+                ]
+            }
+        }
+    },
+    "cloudfront_functions": {
+        "resume-app-redirect-to-www": {
+            "logical_name": "CloudfrontFunctionRedirectToWww",
+            "code_location": "src/backend/webapp/cloudfront_functions/redirect-to-www/resume-app-redirect-to-www.mjs",
+            "auto_publish": true,
+            "post_deployment_custom_resources": {
+                "cloudfront-placeholder-replacer-redirect-to-www": {
+                    "logical_name": "CustomResourceReplacePlaceholdersRedirectToWww",
+                    "resource_type": "Custom::CloudFrontFunctionPlaceholderReplacer",
+                    "provider": "cfn-provider-cloudfront-function-redirect-placeholders",
+                    "domain_name": "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "domain_uri": "[BASE_DOMAIN_URL_PLACEHOLDER]"
+                }
+            }
+        }
+    }
+}

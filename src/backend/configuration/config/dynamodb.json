@@ -1,0 +1,88 @@
+{
+    "resumes": {
+        "logical_name": "DynamoDBTableResumes",
+        "partition_key": {
+            "type": "STRING",
+            "name": "id"
+        },
+        "sort_key": {},
+        "global_indexes": {
+            "id-index": {
+                "partition_key": {
+                    "type": "STRING",
+                    "name": "id"
+                },
+                "sort_key": {},
+                "projection_type": "KEYS_ONLY"
+            },
+            "resume_state-id-index": {
+                "partition_key": {
+                    "type": "STRING",
+                    "name": "resume_state"
+                },
+                "sort_key": {
+                    "type": "STRING",
+                    "name": "id"
+                },
+                "projection_type": "ALL"
+            }
+        },
+        "stream": {
+            "view_type": "NEW_IMAGE",
+            "function_name": "cloudfront-cache-invalidator",
+            "enabled": true,
+            "filters": [
+                {
+                    "pattern": {
+                        "dynamodb": {
+                            "NewImage": {
+                                "invalidate_cache": {
+                                    "N": [
+                                        {
+                                            "exists": true
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "retry_attempts": 1,
+            "starting_position": "LATEST",
+            "batch_size": 500,
+            "max_batching_window": "PT15S"
+        }
+    },
+    "resume-views": {
+        "logical_name": "DynamoDBTableResumeViews",
+        "partition_key": {
+            "type": "STRING",
+            "name": "id"
+        },
+        "sort_key": {},
+        "default_item": [
+            {
+                "type": "STRING",
+                "name": "id",
+                "value": "all_resumes"
+            },
+            {
+                "type": "NUMBER",
+                "name": "view_count",
+                "value": 0
+            }
+        ]
+    },
+    "resume-viewers": {
+        "logical_name": "DynamoDBTableResumeViewers",
+        "partition_key": {
+            "type": "STRING",
+            "name": "viewer"
+        },
+        "sort_key": {
+            "type": "STRING",
+            "name": "datetime"
+        }
+    }
+}

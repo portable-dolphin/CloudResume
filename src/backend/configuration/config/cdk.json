@@ -1,0 +1,693 @@
+{
+    "static_variables": {
+        "api_gateway_manager_api_name": "app-management-api",
+        "api_gateway_resumes_api_name": "api",
+        "cognito_authorized_groups_array": "[\"ResumeManager\"]",
+        "cloudfront_custom_error_404_path": "/404.html",
+        "cors_preflight_max_age": "3600",
+        "default_resume_name": "resume.html",
+        "deploy_region": "us-west-2",
+        "domain_authenticator": "app-management-zone",
+        "domain_manager_api": "app-management-api",
+        "domain_resume_api": "api",
+        "dynamodb_resumes_table_name": "resumes",
+        "dynamodb_resume_viewers_table_name": "resume-viewers",
+        "dynamodb_resume_views_table_name": "resume-views",
+        "dynamodb_resumes_state_id_index_name": "resume_state-id-index",
+        "dynamodb_resumes_id_index_name": "id-index",
+        "manager_login_redirect_file": "login-verify.html",
+        "s3_documents_bucket_name": "resume-static-documents",
+        "s3_documents_upload_location": "documents",
+        "s3_documents_parsed_location": "parsed-documents",
+        "s3_webpage_bucket_name": "resume-static-webpage",
+        "s3_webpage_resumes_location": "resumes",
+        "s3_webpage_management_zone_location": "management-zone",
+        "s3_webpage_manager_location": "management-zone/manager"
+    },
+    "cfn_variable_replacements": {
+        "[ACCOUNT_ID_STRING]": {
+            "environments": {
+                "ALL": {
+                    "source": "env",
+                    "variable_name": "APP_DEPLOY_ACCOUNT"
+                }
+            },
+            "export": false
+        },
+        "[ACCESS_CONTROL_ALLOW_ORIGIN_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "provided",
+                            "value": "https://www."
+                        }
+                    ]
+                }
+            },
+            "export": false
+        },
+        "[BASE_APP_MANAGEMENT_API_HOST_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "cdk_static_variables",
+                            "variable_name": "api_gateway_manager_api_name"
+                        },
+                        {
+                            "source": "provided",
+                            "value": "."
+                        }
+                    ]
+                }
+            },
+            "export": false
+        },
+        "[BASE_APP_MANAGEMENT_API_URL_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_APP_MANAGEMENT_API_HOST_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "provided",
+                            "value": "https://"
+                        }
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[BASE_APP_MANAGEMENT_ZONE_HOST_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "cdk_static_variables",
+                            "variable_name": "domain_authenticator"
+                        },
+                        {
+                            "source": "provided",
+                            "value": "."
+                        }
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[BASE_APP_MANAGEMENT_ZONE_URL_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_APP_MANAGEMENT_ZONE_HOST_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "provided",
+                            "value": "https://"
+                        }
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[BASE_DNS_ZONE_NAME_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "env",
+                    "variable_name": "APP_DNS_ZONE_DOMAIN"
+                }
+            },
+            "export": false
+        },
+        "[BASE_DOMAIN_NAME_PLACEHOLDER]": {
+            "environments": {
+                "PROD": {
+                    "source": "env",
+                    "variable_name": "APP_DNS_ZONE_DOMAIN"
+                },
+                "TEST": {
+                    "source": "env",
+                    "variable_name": "APP_DNS_ZONE_DOMAIN",
+                    "prefixes": [
+                        {
+                            "source": "env",
+                            "variable_name": "APP_TEST_DNS_HOST"
+                        },
+                        {
+                            "source": "provided",
+                            "value": "."
+                        }
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[BASE_DOMAIN_URL_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "provided",
+                            "value": "https://www."
+                        }
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[BASE_RESUME_API_HOST_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "cdk_static_variables",
+                            "variable_name": "api_gateway_resumes_api_name"
+                        },
+                        {
+                            "source": "provided",
+                            "value": "."
+                        }
+                    ]
+                }
+            },
+            "export": false
+        },
+        "[BASE_RESUME_API_URL_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_RESUME_API_HOST_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "provided",
+                            "value": "https://"
+                        }
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[CLOUDFRONT_CUSTOM_ERROR_404_PATH_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "cloudfront_custom_error_404_path"
+                }
+            },
+            "export": false
+        },
+        "[CLOUDFRONT_DISTRIBUTION_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "CloudfrontDistributionResumeWebsite",
+                    "attribute": "distribution_arn"
+                }
+            },
+            "export": false
+        },
+        "[CLOUDFRONT_DISTRIBUTION_ID_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "CloudfrontDistributionResumeWebsite",
+                    "attribute": "distribution_id"
+                }
+            },
+            "export": false
+        },
+        "[CLOUDFRONT_FUNCTION_REDIRECT_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "CloudfrontFunctionRedirectToWww",
+                    "attribute": "function_arn"
+                }
+            },
+            "export": false
+        },
+        "[COGNITO_AUTHORIZED_GROUPS_ARRAY_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "cognito_authorized_groups_array"
+                }
+            },
+            "export": true
+        },
+        "[COGNITO_CLIENT_ID_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "CognitoUserPoolResumeManagerAppClient",
+                    "attribute": "user_pool_client_id"
+                }
+            },
+            "export": true
+        },
+        "[COGNITO_LOGIN_NOTIFICATION_EMAIL_STRING]": {
+            "environments": {
+                "ALL": {
+                    "source": "env",
+                    "variable_name": "APP_COGNITO_LOGIN_NOTIFICATION_EMAIL"
+                }
+            },
+            "export": false
+        },
+        "[COGNITO_MFA_SETTING_STRING]": {
+            "environments": {
+                "ALL": {
+                    "source": "config_file",
+                    "file": "cognito.json",
+                    "path": [
+                        "userpools",
+                        "resume_manager_user_pool",
+                        "authentication",
+                        "mfa"
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[COGNITO_USERPOOL_ID_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "CognitoUserPoolResumeManager",
+                    "attribute": "user_pool_id"
+                }
+            },
+            "export": true
+        },
+        "[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "cors_preflight_max_age"
+                }
+            },
+            "export": true
+        },
+        "[DEFAULT_RESUME_URL_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_DOMAIN_URL_PLACEHOLDER]",
+                    "suffixes": [
+                        {
+                            "source": "provided",
+                            "value": "/"
+                        },
+                        {
+                            "source": "cdk_static_variables",
+                            "variable_name": "s3_webpage_resumes_location"
+                        },
+                        {
+                            "source": "provided",
+                            "value": "/"
+                        },
+                        {
+                            "source": "cdk_static_variables",
+                            "variable_name": "default_resume_name"
+                        }
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[DEPLOY_REGION_STRING]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "deploy_region"
+                }
+            },
+            "export": false
+        },
+        "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "env",
+                    "variable_name": "APP_DNS_HOSTED_ZONE_ID"
+                }
+            },
+            "export": false
+        },
+        "[DNS_ROLE_ARN_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[DNS_ZONE_ACCOUNT_PLACEHOLDER]",
+                    "prefixes": [
+                        {
+                            "source": "provided",
+                            "value": "arn:aws:iam::"
+                        }
+                    ],
+                    "suffixes": [
+                        {
+                            "source": "provided",
+                             "value": ":role/AllowRoute53ListHostedZoneListChangeRecordSets"
+                        }
+                    ]
+                }
+            }
+        },
+        "[DNS_ZONE_ACCOUNT_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "env",
+                    "variable_name": "APP_DNS_ZONE_ACCOUNT"
+                }
+            },
+            "export": false
+        },
+        "[DYNAMODB_REGION_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "deploy_region"
+                }
+            },
+            "export": false
+        },
+        "[DYNAMODB_RESUMES_TABLE_ID_INDEX_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "dynamodb_resumes_id_index_name"
+                }
+            },
+            "export": false
+        },
+        "[DYNAMODB_RESUMES_TABLE_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "DynamoDBTableResumes",
+                    "attribute": "table_name"
+                }
+            },
+            "export": true
+        },
+        "[DYNAMODB_RESUMES_TABLE_STATE_ID_INDEX_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "dynamodb_resumes_state_id_index_name"
+                }
+            },
+            "export": false
+        },
+        "[DYNAMODB_RESUME_VIEWERS_TABLE_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "DynamoDBTableResumeViewers",
+                    "attribute": "table_name"
+                }
+            },
+            "export": true
+        },
+        "[DYNAMODB_RESUME_VIEWS_TABLE_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "DynamoDBTableResumeViews",
+                    "attribute": "table_name"
+                }
+            },
+            "export": true
+        },
+        "[DYNAMODB_TABLE_RESUME_VIEWERS_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "DynamoDBTableResumeViewers",
+                    "attribute": "table_arn"
+                }
+            },
+            "export": false
+        },
+        "[DYNAMODB_TABLE_RESUME_VIEWS_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "DynamoDBTableResumeViews",
+                    "attribute": "table_arn"
+                }
+            },
+            "export": false
+        },
+        "[DYNAMODB_TABLE_RESUMES_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "DynamoDBTableResumes",
+                    "attribute": "table_arn"
+                }
+            },
+            "export": false
+        },
+        "[DYNAMODB_TABLE_STREAM_RESUME_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "DynamoDBTableResumes",
+                    "attribute": "table_stream_arn"
+                }
+            },
+            "export": false
+        },
+        "[MONITORING_EMAIL_LIST_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "env",
+                    "variable_name": "APP_MONITORING_EMAIL_LIST"
+                }
+            },
+            "export": false
+
+        },
+        "[REDIRECT_URL_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_cfn_variable_replacements",
+                    "variable_name": "[BASE_DOMAIN_URL_PLACEHOLDER]",
+                    "suffixes": [
+                        {
+                            "source": "provided",
+                            "value": "/"
+                        },
+                        {
+                            "source": "cdk_static_variables",
+                            "variable_name": "s3_webpage_management_zone_location"
+                        },
+                        {
+                            "source": "provided",
+                            "value": "/"
+                        },
+                        {
+                            "source": "cdk_static_variables",
+                            "variable_name": "manager_login_redirect_file"
+                        }
+                    ]
+                }
+            },
+            "export": true
+        },
+        "[S3_BUCKET_DOCUMENTS_PARSED_LOCATION_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "s3_documents_parsed_location"
+                }
+            },
+            "export": false
+        },
+        "[S3_BUCKET_DOCUMENTS_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "S3BucketResumeStaticDocuments",
+                    "attribute": "bucket_name"
+                }
+            },
+            "export": true
+        },
+        "[S3_BUCKET_DOCUMENTS_UPLOAD_LOCATION_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "s3_documents_upload_location"
+                }
+            },
+            "export": false
+        },
+        "[S3_BUCKET_RESUME_STATIC_DOCUMENTS_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "S3BucketResumeStaticDocuments",
+                    "attribute": "bucket_arn"
+                }
+            },
+            "export": false
+        },
+        "[S3_BUCKET_RESUME_STATIC_WEBPAGE_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "S3BucketResumeStaticWebpage",
+                    "attribute": "bucket_arn"
+                }
+            },
+            "export": false
+        },
+        "[S3_BUCKET_WEBPAGE_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "S3BucketResumeStaticWebpage",
+                    "attribute": "bucket_name"
+                }
+            },
+            "export": true
+        },
+        "[S3_BUCKET_WEBPAGE_RESUMES_LOCATION_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "s3_webpage_resumes_location"
+                }
+            },
+            "export": false
+        },
+        "[S3_REGION_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "cdk_static_variables",
+                    "variable_name": "deploy_region"
+                }
+            },
+            "export": false
+        },
+        "[SNS_TOPIC_PLACEHOLDER]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "SNSTopicManagementPageLoginSuccess",
+                    "attribute": "topic_arn"
+                }
+            },
+            "export": false
+        },
+        "[SNS_TOPIC_API_GATEWAY_ERRORS_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "SNSTopicApiGatewayErrors",
+                    "attribute": "topic_arn"
+                }
+            },
+            "export": false
+        },
+        "[SNS_TOPIC_CLOUDFRONT_ERRORS_ARN]": {
+            "environments": {
+                "ALL": {
+                    "source": "resource_attribute",
+                    "resource_logical_name": "SNSTopicCloudfrontErrors",
+                    "attribute": "topic_arn"
+                }
+            },
+            "export": false
+        }
+    },
+    "custom_resources": {
+        "providers": {
+            "cfn-provider-create-and-validate-acm-certificates": {
+                "logical_name": "CfnProviderCreateValidateAcmCertificates",
+                "on_event_handler": "cfn-create-and-validate-acm-certificates",
+                "is_complete_handler": "cfn-check-acm-certificate-validation-status",
+                "total_timeout": "PT45M",
+                "resources_iam_policies": []
+            },
+            "cfn-provider-create-dns-records": {
+                "logical_name": "CfnProviderCreateDnsRecords",
+                "on_event_handler": "cfn-create-dns-records",
+                "resources_iam_policies": []
+            },
+            "cfn-provider-cloudfront-function-redirect-placeholders": {
+                "logical_name": "CfnProviderCloudfrontFunctionRedirectPlaceholders",
+                "on_event_handler": "cfn-cloudfront-function-redirect-placeholders",
+                "resources_iam_policies": [
+                    {
+                        "name": "Allow-CloudFront-Create-Update-Describe-Delete-Get-Publish-Test",
+                        "service": "lambda",
+                        "statement_number": 0
+                    }
+                ]
+            },
+            "cfn-provider-empty-bucket": {
+                "logical_name": "CfnProviderEmptyBucket",
+                "on_event_handler": "cfn-empty-bucket",
+                "resources_iam_policies": [
+                    {
+                        "name": "Allow-S3-List-Delete",
+                        "service": "lambda",
+                        "statement_number": 0
+                    }
+                ]
+            },
+            "cfn-provider-update-cloudfront-behavior-edge-lambda-version": {
+                "logical_name": "CfnProviderUpdateCloudfrontBehaviorEdgeLambdaVersion",
+                "on_event_handler": "cfn-update-cloudfront-behavior-edge-lambda-version",
+                "resources_iam_policies": [
+                    {
+                        "name": "Allow-IAM-Create-Lambda-Get-List-Version-Enable-Disable",
+                        "service": "lambda",
+                        "statement_number": 0
+                    }
+                ]
+            },
+            "cfn-provider-update-lambda-function-placeholders": {
+                "logical_name": "CfnProviderUpdateLambdaFunctionPlaceholders",
+                "on_event_handler": "cfn-update-lambda-function-placeholders",
+                "resources_iam_policies": [
+                    {
+                        "name": "Allow-IAM-Pass-Role-Lambda-Create-Update-List-Get-Delete-Publish",
+                        "service": "lambda",
+                        "statement_number": 0
+                    }
+                ]
+            },
+            "cfn-provider-update-api-gateway-lambda-integration-versions": {
+                "logical_name": "CfnProviderUpdateApiGatewayLambdaIntegrationVersions",
+                "on_event_handler": "cfn-update-api-gateway-lambda-integration-versions",
+                "resources_iam_policies": [
+                    {
+                        "name": "Allow-Api-Gateway-Post-Patch",
+                        "service": "apigateway",
+                        "statement_number": 0
+                    },
+                    {
+                        "name": "Allow-Lambda-List-Version-Api-Gateway",
+                        "service": "lambda",
+                        "statement_number": 0
+                    }
+                ]
+            }
+        }
+    }
+}

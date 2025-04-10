@@ -1,0 +1,102 @@
+name: Deploy and Test - Prod Environment
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "app.py"
+      - "deploy_app.py"
+concurrency:
+  group: deployment
+  cancel-in-progress: false
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  ProdWorkflowBuild:
+    if: github.event.pull_request.merged == true
+    uses: ./.github/workflows/build.yml
+    with:
+      deploy_env: PROD
+      stack_prefix: ${{ vars.APP_STACK_PREFIX }}
+      increment_lambda: "1"
+      get_view_count: "true"
+    secrets:
+      deploy_account: ${{ secrets.APP_DEPLOY_ACCOUNT_PROD }}
+      dns_zone_domain: ${{ secrets.APP_DNS_ZONE_DOMAIN }}
+      dns_zone_account: ${{ secrets.APP_DNS_ZONE_ACCOUNT }}
+      dns_hosted_zone_id: ${{ secrets.APP_DNS_HOSTED_ZONE_ID }}
+      cognito_login_notification_email: ${{ secrets.APP_COGNITO_LOGIN_NOTIFICATION_EMAIL_PROD }}
+      dev_blog_url: ${{ secrets.APP_DEV_BLOG_URL }}
+      cognito_initial_username: ${{ secrets.APP_COGNITO_INITIAL_USERNAME }}
+      cognito_initial_user_email: ${{ secrets.APP_COGNITO_INITIAL_USER_EMAIL }}
+      cognito_initial_user_password: ${{ secrets.APP_COGNITO_INITIAL_USER_PASSWORD }}
+      cognito_initial_user_given_name: ${{ secrets.APP_COGNITO_INITIAL_USER_GIVEN_NAME }}
+      monitoring_email_list: ${{ secrets.APP_MONITORING_EMAIL_LIST_PROD }}
+      homepage_title: ${{ secrets.APP_HOMEPAGE_TITLE }}
+      aws_github_role: ${{ secrets.AWS_GITHUB_ROLE }}
+      aws_default_region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+  ProdWorkflowTest:
+    if: github.event.pull_request.merged == true
+    needs: ProdWorkflowBuild
+    uses: ./.github/workflows/test.yml
+    with:
+      deploy_env: PROD
+    secrets:
+      dns_zone_domain: ${{ secrets.APP_DNS_ZONE_DOMAIN }}
+      dev_blog_url: ${{ secrets.APP_DEV_BLOG_URL }}
+      cognito_initial_user_email: ${{ secrets.APP_COGNITO_INITIAL_USER_EMAIL }}
+      cognito_initial_user_password: ${{ secrets.APP_COGNITO_INITIAL_USER_PASSWORD }}
+      cognito_initial_user_given_name: ${{ secrets.APP_COGNITO_INITIAL_USER_GIVEN_NAME }}
+      initial_resume_docx_url: ${{ secrets.APP_INITIAL_RESUME_DOCX_URL }}
+      initial_resume_source_code_url: ${{ secrets.APP_INITIAL_RESUME_SOURCE_CODE_URL }}
+      test_resume_docx_url: ${{ secrets.APP_TEST_RESUME_DOCX_URL }}
+      test_resume_source_code_url: ${{ secrets.APP_TEST_RESUME_SOURCE_CODE_URL }}
+      test_modified_resume_docx_url: ${{ secrets.APP_TEST_MODIFIED_RESUME_DOCX_URL }}
+      test_modified_resume_source_code_url: ${{ secrets.APP_TEST_MODIFIED_RESUME_SOURCE_CODE_URL }}
+      homepage_source_code_url: ${{ secrets.APP_HOMEPAGE_SOURCE_CODE_URL }}
+
+  ProdWorkflowSetViewCounter:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    needs: ProdWorkflowTest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+      - name: Configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.APP_DEPLOY_ACCOUNT_PROD }}:role/${{ secrets.AWS_GITHUB_ROLE }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Install pip packages
+        run: pip3 install -r cdk/requirements.txt
+      - name: Get View Count Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: view_count
+      - name: Set View Counter
+        run: |
+          export APP_DEPLOY_ENV=PROD
+          export APP_STACK_PREFIX=${{ vars.APP_STACK_PREFIX }}
+          export APP_DEPLOY_ACCOUNT=${{ secrets.APP_DEPLOY_ACCOUNT_PROD }}
+          export APP_DNS_ZONE_DOMAIN=${{ secrets.APP_DNS_ZONE_DOMAIN }}
+          export APP_DNS_ZONE_ACCOUNT=${{ secrets.APP_DNS_ZONE_ACCOUNT }}
+          export APP_DNS_HOSTED_ZONE_ID=${{ secrets.APP_DNS_HOSTED_ZONE_ID }}
+          export APP_COGNITO_LOGIN_NOTIFICATION_EMAIL=${{ secrets.APP_COGNITO_LOGIN_NOTIFICATION_EMAIL_PROD }}
+          export APP_DEV_BLOG_URL=${{ secrets.APP_DEV_BLOG_URL }}
+          export APP_COGNITO_INITIAL_USERNAME=${{ secrets.APP_COGNITO_INITIAL_USERNAME }}
+          export APP_COGNITO_INITIAL_USER_EMAIL=${{ secrets.APP_COGNITO_INITIAL_USER_EMAIL }}
+          export APP_COGNITO_INITIAL_USER_PASSWORD=${{ secrets.APP_COGNITO_INITIAL_USER_PASSWORD }}
+          export APP_COGNITO_INITIAL_USER_GIVEN_NAME=${{ secrets.APP_COGNITO_INITIAL_USER_GIVEN_NAME }}
+          export APP_MONITORING_EMAIL_LIST='${{ secrets.APP_MONITORING_EMAIL_LIST_PROD }}'
+          export APP_HOMEPAGE_TITLE='${{ secrets.APP_HOMEPAGE_TITLE }}'
+          if [ ! -f view_count ]; then
+            echo "Could not find view_count file! Cannot set view_count!"
+            exit 1
+          fi
+          VIEW_COUNT=$(cat view_count)
+          python3 deploy_app.py --skip-deploy-infrastructure --skip-deploy-website --skip-bucket-ready-wait --set-view-counter $VIEW_COUNT

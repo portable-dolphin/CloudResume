@@ -1,0 +1,13 @@
+{
+    "html_resume_template": "templates/resume-template.html",
+    "html_work_experience_template": "templates/work-experience-template.html",
+    "source_bucket_region": "[S3_REGION_PLACEHOLDER]",
+    "source_bucket": "[S3_BUCKET_DOCUMENTS_PLACEHOLDER]",
+    "source_bucket_move_destination_folder": "[S3_BUCKET_DOCUMENTS_PARSED_LOCATION_PLACEHOLDER]",
+    "destination_bucket_region": "[S3_REGION_PLACEHOLDER]",
+    "destination_bucket": "[S3_BUCKET_WEBPAGE_PLACEHOLDER]",
+    "destination_bucket_destination_folder": "[S3_BUCKET_WEBPAGE_RESUMES_LOCATION_PLACEHOLDER]",
+    "dynamodb_table_name": "[DYNAMODB_RESUMES_TABLE_PLACEHOLDER]",
+    "dynamodb_table_region": "[DYNAMODB_REGION_PLACEHOLDER]",
+    "resumes_url_base": "[BASE_DOMAIN_URL_PLACEHOLDER]"
+}

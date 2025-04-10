@@ -1,0 +1,841 @@
+{
+    "policies": {
+        "Allow-ACM-Describe-SSM-Get": {
+            "logical_name": "IAMPolicyAllowACMDescribeSSMGet",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+            			"Sid": "AllowDescribe",
+            			"Effect": "Allow",
+            			"Action": "acm:DescribeCertificate",
+            			"Resource": [
+            			    "arn:aws:acm:us-east-1:[ACCOUNT_ID_STRING]:certificate/*",
+            			    "arn:aws:acm:[DEPLOY_REGION_STRING]:[ACCOUNT_ID_STRING]:certificate/*"
+            			]
+		            },
+		            {
+            			"Sid": "AllowGet",
+            			"Effect": "Allow",
+            			"Action": "ssm:GetParameter",
+            			"Resource": [
+            			    "arn:aws:ssm:us-east-1:[ACCOUNT_ID_STRING]:parameter/ResumeAppACMCertificateArn/*",
+            			    "arn:aws:ssm:[DEPLOY_REGION_STRING]:[ACCOUNT_ID_STRING]:parameter/ResumeAppACMCertificateArn/*"
+            			]
+            		}
+                ]
+            }
+        },
+        "Allow-ACM-Delete-Describe-SSM-Delete-Get-Put": {
+            "logical_name": "IAMPolicyAllowACMDeleteDescribeSSMDeleteGetPut",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+            			"Sid": "AllowDeleteDescribe",
+            			"Effect": "Allow",
+            			"Action": [
+            				"acm:DeleteCertificate",
+            				"acm:DescribeCertificate"
+            			],
+            			"Resource": [
+            			    "arn:aws:acm:us-east-1:[ACCOUNT_ID_STRING]:certificate/*",
+            			    "arn:aws:acm:[DEPLOY_REGION_STRING]:[ACCOUNT_ID_STRING]:certificate/*"
+            			]
+            		},
+            		{
+            			"Sid": "AllowRequest",
+            			"Effect": "Allow",
+            			"Action": "acm:RequestCertificate",
+            			"Resource": "*"
+            		},
+		            {
+            			"Sid": "AllowDeleteGetPut",
+            			"Effect": "Allow",
+            			"Action": [
+            				"ssm:PutParameter",
+            				"ssm:DeleteParameter",
+            				"ssm:GetParameters",
+            				"ssm:GetParameter",
+            				"ssm:DeleteParameters"
+            			],
+            			"Resource": [
+            				"arn:aws:ssm:us-east-1:[ACCOUNT_ID_STRING]:parameter/ResumeAppACMCertificateArn/*",
+            				"arn:aws:ssm:us-east-1:[ACCOUNT_ID_STRING]:parameter/ResumeAppACMIdempotencyToken/*",
+            				"arn:aws:ssm:[DEPLOY_REGION_STRING]:[ACCOUNT_ID_STRING]:parameter/ResumeAppACMCertificateArn/*",
+            				"arn:aws:ssm:[DEPLOY_REGION_STRING]:[ACCOUNT_ID_STRING]:parameter/ResumeAppACMIdempotencyToken/*"
+            			]
+            		}
+                ]
+            }
+        },
+        "Allow-Api-Gateway-Post-Patch": {
+            "logical_name": "IAMPolicyAllowApiGatewayPatchPost",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowPatchPost",
+                        "Effect": "Allow",
+                        "Action": [
+                            "apigateway:GET",
+                            "apigateway:PATCH",
+                            "apigateway:POST"
+                        ],
+                        "Resource": []
+                    }
+                ]
+            }
+        },
+        "Allow-CloudFront-Create-Update-Describe-Delete-Get-Publish-Test": {
+            "logical_name": "IAMPolicyAllowCloudFrontCreateUpdateDescribeDeleteGetPublishTest",
+            "permissions": {
+            	"Version": "2012-10-17",
+            	"Statement": [
+            		{
+            			"Sid": "AllowDescribePublishUpdateTestCreateDelete",
+            			"Effect": "Allow",
+            			"Action": [
+            				"cloudfront:DescribeFunction",
+            				"cloudfront:PublishFunction",
+            				"cloudfront:UpdateFunction",
+            				"cloudfront:TestFunction",
+            				"cloudfront:CreateFunction",
+            				"cloudfront:DeleteFunction",
+            				"cloudfront:GetFunction"
+            			],
+            			"Resource": []
+            		}
+            	]
+            }
+        },
+        "Allow-CloudFront-Get-Create-Cache-Invalidation": {
+            "logical_name": "IAMPolicyAllowCloudFrontGetUpdateDistribution",
+            "permissions": {
+            	"Version": "2012-10-17",
+            	"Statement": [
+            		{
+            			"Sid": "AllowGetCreate",
+            			"Effect": "Allow",
+            			"Action": [
+            				"cloudfront:GetInvalidation",
+            				"cloudfront:CreateInvalidation"
+            			],
+            			"Resource": "[CLOUDFRONT_DISTRIBUTION_ARN]"
+            		}
+            	]
+            }
+        },
+        "Allow-CloudFront-Get-Update-Distribution": {
+            "logical_name": "IAMPolicyAllowCloudFrontGetUpdateDistribution",
+            "permissions": {
+            	"Version": "2012-10-17",
+            	"Statement": [
+            		{
+            			"Sid": "AllowGetUpdate",
+            			"Effect": "Allow",
+            			"Action": [
+            				"cloudfront:GetDistribution",
+            				"cloudfront:UpdateDistribution"
+            			],
+            			"Resource": "[CLOUDFRONT_DISTRIBUTION_ARN]"
+            		}
+            	]
+            }
+        },
+        "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs": {
+            "logical_name": "IAMPolicyAllowCWLogsLogCreateGroupStreamPutLogs",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowCreate",
+                        "Effect": "Allow",
+                        "Action": "logs:CreateLogGroup",
+                        "Resource": "arn:aws:logs:*:[ACCOUNT_ID_STRING]:*"
+                    },
+                    {
+                        "Sid": "AllowCreatePut",
+                        "Effect": "Allow",
+                        "Action": [
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents"
+                        ],
+                        "Resource": "arn:aws:logs:*:[ACCOUNT_ID_STRING]:*"
+                    }
+                ]
+            }
+        },
+        "Allow-DynamoDB-Stream-Get-Describe-List-Resume-Table": {
+            "logical_name": "IAMPolicyAllowDynamoDBStreamGetDescribeListResumeTable",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowGetDescribeList",
+                        "Effect": "Allow",
+                        "Action": [
+                            "dynamodb:GetRecords",
+                            "dynamodb:GetShardIterator",
+                            "dynamodb:DescribeStream",
+                            "dynamodb:ListStreams",
+                            "dynamodb:PartiQLUpdate"
+                        ],
+                        "Resource": "[DYNAMODB_TABLE_STREAM_RESUME_ARN]"
+                    },
+            		{
+            		    "Action": [
+            		        "dynamodb:PartiQLUpdate"
+            			],
+            			"Resource": "[DYNAMODB_TABLE_RESUMES_ARN]",
+            			"Effect": "Allow",
+            			"Sid": "AllowUpdate"
+            		}
+                ]
+            }
+        },
+        "Allow-DynamoDB-Read-Write-Resume-Table": {
+            "logical_name": "IAMPolicyAllowDynamoDBReadWriteResumeTable",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowGetPutDeleteQueryUpdateResumesAndIndex",
+                        "Effect": "Allow",
+                        "Action": [
+                            "dynamodb:BatchGetItem",
+                            "dynamodb:PutItem",
+                            "dynamodb:DeleteItem",
+                            "dynamodb:GetItem",
+                            "dynamodb:Query",
+                            "dynamodb:UpdateItem"
+                        ],
+                        "Resource": [
+                            "[DYNAMODB_TABLE_RESUMES_ARN]",
+                            "[DYNAMODB_TABLE_RESUMES_ARN]/index/url-index",
+                            "[DYNAMODB_TABLE_RESUMES_ARN]/index/resume_state-id-index",
+                            "[DYNAMODB_TABLE_RESUMES_ARN]/index/id-index"
+                        ]
+                    },
+                    {
+                        "Sid": "AllowScanResumesIdIndex",
+                        "Effect": "Allow",
+                        "Action": "dynamodb:Scan",
+                        "Resource": "[DYNAMODB_TABLE_RESUMES_ARN]/index/id-index"
+                    }
+                ]
+            }
+        },
+        "Allow-DynamoDB-Get-Put-Update-Resumes-Resume-Views-Resume-Viewers": {
+            "logical_name": "IAMPolicyAllowDynamoDBGetPutUpdateResumesResumeViewsResumeViewers",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowUpdateOfResumesTable",
+                        "Effect": "Allow",
+                        "Action": [
+                            "dynamodb:UpdateItem"
+                        ],
+                        "Resource": "[DYNAMODB_TABLE_RESUMES_ARN]",
+                        "Condition": {
+                            "ForAllValues:StringEquals": {
+                                "dynamodb:Attributes": [
+                                    "id",
+                                    "view_count"
+                                ]
+                            },
+                            "StringEquals": {
+                                "dynamodb:ReturnValues": [
+                                    "NONE"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "Sid": "AllowGetIdFromResumesTable",
+                        "Effect": "Allow",
+                        "Action": [
+                            "dynamodb:GetItem"
+                        ],
+                        "Resource": "[DYNAMODB_TABLE_RESUMES_ARN]",
+                        "Condition": {
+                            "ForAllValues:StringEquals": {
+                                "dynamodb:Attributes": [
+                                    "id"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "Sid": "AllowUpdateOfResumeViewsTable",
+                        "Effect": "Allow",
+                        "Action": "dynamodb:UpdateItem",
+                        "Resource": "[DYNAMODB_TABLE_RESUME_VIEWS_ARN]",
+                        "Condition": {
+                            "ForAllValues:StringEquals": {
+                                "dynamodb:Attributes": [
+                                    "id",
+                                    "view_count"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "Sid": "AllowPutOfResumeViewersTable",
+                        "Effect": "Allow",
+                        "Action": "dynamodb:PutItem",
+                        "Resource": "[DYNAMODB_TABLE_RESUME_VIEWERS_ARN]",
+                        "Condition": {
+                            "ForAllValues:StringEquals": {
+                                "dynamodb:Attributes": [
+                                    "viewer",
+                                    "datetime"
+                                ]
+                            },
+                            "StringEquals": {
+                                "dynamodb:ReturnValues": [
+                                    "NONE"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "Allow-Dynamodb-Get-Update-Resumes-Table-Resume-Url": {
+            "logical_name": "IAMPolicyAllowDynamodbGetUpdateResumesTableResumeUrl",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowGetUpdate",
+                        "Effect": "Allow",
+                        "Action": [
+                            "dynamodb:GetItem",
+                            "dynamodb:UpdateItem"
+                        ],
+                        "Resource": "[DYNAMODB_TABLE_RESUMES_ARN]",
+                        "Condition": {
+                            "ForAllValues:StringEquals": {
+                                "dynamodb:Attributes": [
+                                    "id",
+                                    "resume_url",
+                                    "invalidate_cache"
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "Allow-IAM-Assume-Role-Route-53-Changes": {
+            "logical_name": "IAMPolicyAllowIAMAssumeRoleRoute53Changes",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowAssumeRole",
+                        "Effect": "Allow",
+                        "Action": "sts:AssumeRole",
+                        "Resource": "[DNS_ROLE_ARN_PLACEHOLDER]"
+                    }
+                ]
+            }
+        },
+        "Allow-IAM-Pass-Role-Lambda-Create-Update-List-Get-Delete-Publish": {
+            "logical_name": "IAMPolicyAllowIAMPassRoleLambdaCreateUpdateGetDeletePublish",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowLambdaCreateUpdateListGetDeletePublish",
+                        "Effect": "Allow",
+                        "Action": [
+            				"lambda:CreateFunction",
+            				"lambda:UpdateFunctionCode",
+            				"lambda:GetFunction",
+            				"lambda:GetFunctionConfiguration",
+            				"lambda:DeleteAlias",
+            				"lambda:DeleteFunction",
+            				"lambda:PublishVersion",
+            				"lambda:ListVersionsByFunction",
+            				"lambda:GetAlias",
+            				"lambda:UpdateAlias",
+            				"lambda:CreateAlias",
+            				"lambda:ListAliases"
+            			],
+                        "Resource": []
+            		},
+                    {
+                        "Sid": "AllowIAMPassRole",
+                        "Effect": "Allow",
+                        "Action": "iam:PassRole",
+                        "Resource": "*",
+                        "Condition": {
+                            "StringEquals": {
+                                "iam:PassedToService": "lambda.amazonaws.com"
+                            }
+                        }
+            		}
+            	]
+            }
+        },
+        "Allow-IAM-Create-Lambda-Get-List-Version-Enable-Disable": {
+            "logical_name": "IAMPolicyAllowLambdaCreateGetListVersionEnableDisable",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+            		    "Sid": "AllowGetListEnableDisable",
+            			"Effect": "Allow",
+            			"Action": [
+            			    "lambda:GetFunction",
+            				"lambda:ListVersionsByFunction",
+            				"lambda:EnableReplication*",
+            				"lambda:DisableReplication*"
+            			],
+            			"Resource": []
+            		},
+            		{
+            		    "Sid": "AllowCreate",
+            			"Effect": "Allow",
+            			"Action": [
+            			    "iam:CreateServiceLinkedRole"
+            			],
+            			"Resource": [
+            			    "arn:aws:iam::[ACCOUNT_ID_STRING]:role/*"
+            			]
+            		}
+            	]
+            }
+        },
+        "Allow-Lambda-List-Version-Api-Gateway" : {
+            "logical_name": "IAMPolicyAllowLambdaListVersionApiGateway",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+            		    "Sid": "AllowList",
+            			"Effect": "Allow",
+            			"Action": [
+            				"lambda:ListVersionsByFunction"
+            			],
+            			"Resource": []
+            		}
+            	]
+            }
+        },
+        "Allow-Route53-Change-List-RecordSet-Get-Change" : {
+            "logical_name": "IAMPolicyAllowRoute53ChangeListRecordSetGetChange",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "Route53ChangeAndListRecordSets",
+                        "Effect": "Allow",
+                        "Action": [
+                            "route53:ChangeResourceRecordSets",
+                            "route53:ListResourceRecordSets"
+                        ],
+                        "Resource": "arn:aws:route53:::hostedzone/[DNS_HOSTED_ZONE_ID_PLACEHOLDER]"
+                    },
+                    {
+                        "Sid": "Route53GetChange",
+                        "Effect": "Allow",
+                        "Action": [
+                            "route53:GetChange"
+                        ],
+                        "Resource": "*"
+                    }
+                ]
+            }
+        },
+        "Allow-S3-Get-Put-Delete-List-Resume-Static-Documents-Parsed-Documents": {
+            "logical_name": "IAMPolicyAllowS3GetPutDeleteListResumeStaticDocumentsParsedDocuments",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowDeleteListPutGet",
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:DeleteObjectVersion",
+                            "s3:ListBucketVersions",
+                            "s3:ListBucket",
+                            "s3:PutObject",
+                            "s3:GetObject"
+                        ],
+                        "Resource": [
+                            "[S3_BUCKET_RESUME_STATIC_DOCUMENTS_ARN]/documents/*",
+                            "[S3_BUCKET_RESUME_STATIC_DOCUMENTS_ARN]"
+                        ]
+                    },
+                    {
+                        "Sid": "AllowDeleteList",
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:DeleteObjectVersion",
+                            "s3:ListBucketVersions",
+                            "s3:ListBucket"
+                        ],
+                        "Resource": [
+                            "[S3_BUCKET_RESUME_STATIC_DOCUMENTS_ARN]/parsed-documents/*",
+                            "[S3_BUCKET_RESUME_STATIC_DOCUMENTS_ARN]"
+                        ]
+                    }
+                ]
+            }
+        },
+        "Allow-S3-Get-Put-Delete-List-Resume-Static-Website-Content": {
+            "logical_name": "IAMPolicyAllowS3GetPutDeleteListResumeStaticWebsiteContent",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowPutGetDeleteList",
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:PutObject",
+                            "s3:GetObject",
+                            "s3:DeleteObjectVersion",
+                            "s3:ListBucketVersions",
+                            "s3:ListBucket",
+                            "s3:DeleteObject"
+                        ],
+                        "Resource": [
+                            "[S3_BUCKET_RESUME_STATIC_WEBPAGE_ARN]/resumes/*",
+                            "[S3_BUCKET_RESUME_STATIC_WEBPAGE_ARN]"
+                        ]
+                    }
+                ]
+            }
+        },
+        "Allow-S3-List-Delete": {
+            "logical_name": "IAMPolicyAllowS3ListDelete",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowListDelete",
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:List*",
+                            "s3:DeleteObject*"
+                        ],
+                        "Resource": []
+                    }
+                ]
+            }
+        },
+        "Allow-S3-Put-Resume-Static-Website-Content": {
+            "logical_name": "IAMPolicyAllowS3PutResumeStaticWebsiteContent",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowPutObject",
+                        "Effect": "Allow",
+                        "Action": "s3:PutObject",
+                        "Resource": [
+                            "[S3_BUCKET_RESUME_STATIC_WEBPAGE_ARN]/resumes/*",
+                            "[S3_BUCKET_RESUME_STATIC_WEBPAGE_ARN]"
+                        ]
+                    }
+                ]
+            }
+        },
+        "Allow-S3-Get-Put-Delete-List-Resume-Static-Documents": {
+            "logical_name": "IAMPolicyAllowS3GetPutDeleteListResumeStaticDocuments",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowPutGetDeleteList",
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:PutObject",
+                            "s3:GetObject",
+                            "s3:DeleteObjectVersion",
+                            "s3:ListBucketVersions",
+                            "s3:ListBucket",
+                            "s3:DeleteObject"
+                        ],
+                        "Resource": [
+                            "[S3_BUCKET_RESUME_STATIC_DOCUMENTS_ARN]",
+                            "[S3_BUCKET_RESUME_STATIC_DOCUMENTS_ARN]/*"
+                        ]
+                    }
+                ]
+            }
+        },
+        "Allow-SNS-Publish-Management-Page-Login-Success": {
+            "logical_name": "IAMPolicyAllowSNSPublishManagementPageLoginSuccess",
+            "permissions": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowPublish",
+                        "Effect": "Allow",
+                        "Action": "sns:Publish",
+                        "Resource": "[SNS_TOPIC_PLACEHOLDER]"
+                    }
+                ]
+            }
+        }
+    },
+    "roles": {
+        "AuthorizeManagementZoneRole": {
+            "logical_name": "IAMRoleAuthorizeManagementZoneRole",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs"
+            ],
+            "assumed_by": {
+				"Service": [
+					"edgelambda.amazonaws.com",
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CFNAPIUpdateIntegrationBackend": {
+            "logical_name": "IAMRoleCFNAPIUpdateIntegrationBackend",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-Api-Gateway-Post-Patch",
+                "Allow-Lambda-List-Version-Api-Gateway"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CFNCheckACMCertificateStatusRole": {
+            "logical_name": "IAMRoleCFNCheckACMCertificateStatusRole",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-ACM-Describe-SSM-Get"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CFNCloudFrontUpdateDistribution": {
+            "logical_name": "IAMRoleCFNCloudFrontUpdateDistribution",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-CloudFront-Get-Update-Distribution",
+                "Allow-IAM-Create-Lambda-Get-List-Version-Enable-Disable"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CFNCloudFrontFunctionChangesRole": {
+            "logical_name": "IAMRoleCFNCloudFrontFunctionChangesRole",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-CloudFront-Create-Update-Describe-Delete-Get-Publish-Test"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CFNCreateAndValidateACMCertificates": {
+            "logical_name": "IAMRoleCFNCreateAndValidateACMCertificatesRole",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-ACM-Delete-Describe-SSM-Delete-Get-Put",
+                "Allow-IAM-Assume-Role-Route-53-Changes",
+                "Allow-Route53-Change-List-RecordSet-Get-Change"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CFNCreateDNSRecords": {
+            "logical_name": "IAMRoleCFNCreateDNSRecords",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-IAM-Assume-Role-Route-53-Changes",
+                "Allow-Route53-Change-List-RecordSet-Get-Change"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CFNEmptyBucket": {
+            "logical_name": "IAMRoleCFNEmptyBucket",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-S3-List-Delete"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CFNLambdaCodeChangesRole": {
+            "logical_name": "IAMRoleCFNLambdaCodeChangesRole",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-IAM-Pass-Role-Lambda-Create-Update-List-Get-Delete-Publish"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CloudfrontCacheInvalidator": {
+            "logical_name": "IAMRoleCloudfrontCacheInvalidator",
+            "policies": [
+                "Allow-CloudFront-Get-Create-Cache-Invalidation",
+                "Allow-DynamoDB-Read-Write-Resume-Table",
+                "Allow-DynamoDB-Stream-Get-Describe-List-Resume-Table",
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CognitoPreTokenGenerationAddAttributesRole": {
+            "logical_name": "IAMRoleCognitoPreTokenGenerationAddAttributesRole",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "CognitoSendEmailAfterAuthenticationRole": {
+            "logical_name": "IAMRoleCognitoSendEmailAfterAuthenticationRole",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-SNS-Publish-Management-Page-Login-Success"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "ConvertResumeToHtmlRole": {
+            "logical_name": "IAMRoleConvertResumeToHtmlRole",
+            "policies": [
+                "Allow-Dynamodb-Get-Update-Resumes-Table-Resume-Url",
+                "Allow-S3-Put-Resume-Static-Website-Content",
+                "Allow-S3-Get-Put-Delete-List-Resume-Static-Documents",
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "LambdaManagerBackendRole": {
+            "logical_name": "IAMRoleLambdaManagerBackendRole",
+            "policies": [
+                "Allow-DynamoDB-Read-Write-Resume-Table",
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-S3-Get-Put-Delete-List-Resume-Static-Documents-Parsed-Documents",
+                "Allow-S3-Get-Put-Delete-List-Resume-Static-Website-Content"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        },
+        "LambdaResumeBackendRole": {
+            "logical_name": "IAMRoleLambdaResumeBackendRole",
+            "policies": [
+                "Allow-CW-Logs-Log-Create-Group-Stream-Put-Logs",
+                "Allow-DynamoDB-Get-Put-Update-Resumes-Resume-Views-Resume-Viewers"
+            ],
+            "assumed_by": {
+				"Service": [
+					"lambda.amazonaws.com"
+				]
+			}
+        }
+    },
+    "resource_based_policies": {
+        "s3_policies": {
+            "Allow-Cloudfront-Get-Resume-Static-Webpage": {
+                "logical_name": "S3ResourcePolicyAllowCloudfrontGetResumeStaticWebpage",
+                "policy": {
+                    "Version": "2008-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "AllowCloudFrontServicePrincipal",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "cloudfront.amazonaws.com"
+                            },
+                            "Action": "s3:GetObject",
+                            "Resource": "[S3_BUCKET_RESUME_STATIC_WEBPAGE_ARN]/*",
+                            "Condition": {
+                                "StringEquals": {
+                                    "AWS:SourceArn": "[CLOUDFRONT_DISTRIBUTION_ARN]"
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "sns_policies": {
+            "Allow-CloudWatch-Publish-Api-Gateway-Errors-Topic": {
+                "logical_name": "SNSResourcePolicyAllowCloudWatchPublishApiGatewayErrorsTopic",
+                "policy": {
+                    "Version": "2008-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "AllowPublish",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "cloudwatch.amazonaws.com"
+                            },
+                            "Action": "sns:Publish",
+                            "Resource": "[SNS_TOPIC_API_GATEWAY_ERRORS_ARN]"
+                        }
+                    ]
+                }
+            },
+            "Allow-CloudWatch-Publish-Cloudfront-Errors-Topic": {
+                "logical_name": "SNSResourcePolicyAllowCloudWatchPublishCloudfrontErrorsTopic",
+                "policy": {
+                    "Version": "2008-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "AllowPublish",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "cloudwatch.amazonaws.com"
+                            },
+                            "Action": "sns:Publish",
+                            "Resource": "[SNS_TOPIC_CLOUDFRONT_ERRORS_ARN]"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

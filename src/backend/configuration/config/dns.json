@@ -1,0 +1,151 @@
+{
+    "record_sets": {
+        "app_management_zone": {
+            "dns_zone_domain": "[BASE_DNS_ZONE_NAME_PLACEHOLDER]",
+            "dns_zone_role_arn": "[DNS_ROLE_ARN_PLACEHOLDER]",
+            "route53_hosted_zone_id": "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]",
+            "records": [
+                {
+                    "name": "[BASE_APP_MANAGEMENT_ZONE_HOST_PLACEHOLDER]",
+                    "type": "A",
+                    "alias_target": {
+                        "hosted_zone_id": {
+                            "source": "provided",
+                            "value": "Z2FDTNDATAQYW2"
+                        },
+                        "dns_name": {
+                            "source": "resource_attribute",
+                            "resource_logical_name": "CognitoUserPoolResumeManagerDomain",
+                            "attribute": "cloud_front_endpoint"
+                        }
+                    }
+                }
+            ],
+            "custom_resources": {
+                "domain-dns-records": {
+                    "logical_name": "CustomResourceDnsRecordAppManagementZone",
+                    "resource_type": "Custom::CreateDNSRecords",
+                    "provider": "cfn-provider-create-dns-records",
+                    "depends_on": [
+                        "CognitoUserPoolResumeManagerDomain"
+                    ]
+                }
+            }
+        },
+        "resume_api": {
+            "dns_zone_domain": "[BASE_DNS_ZONE_NAME_PLACEHOLDER]",
+            "dns_zone_role_arn": "[DNS_ROLE_ARN_PLACEHOLDER]",
+            "route53_hosted_zone_id": "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]",
+            "records": [
+                {
+                    "name": "[BASE_RESUME_API_HOST_PLACEHOLDER]",
+                    "type": "A",
+                    "alias_target": {
+                        "hosted_zone_id": {
+                            "source": "resource_attribute",
+                            "resource_logical_name": "ApiCustomDomainResumeApiV1",
+                            "attribute": "domain_name_alias_hosted_zone_id"
+                        },
+                        "dns_name": {
+                            "source": "resource_attribute",
+                            "resource_logical_name": "ApiCustomDomainResumeApiV1",
+                            "attribute": "domain_name_alias_domain_name"
+                        }
+                    }
+                }
+            ],
+            "custom_resources": {
+                "domain-dns-records": {
+                    "logical_name": "CustomResourceDnsRecordResumeApi",
+                    "resource_type": "Custom::CreateDNSRecords",
+                    "provider": "cfn-provider-create-dns-records",
+                    "depends_on": [
+                        "ApiCustomDomainResumeManagerApiV1",
+                        "ResumeApi"
+                    ]
+                }
+            }
+        },
+        "resume_manager_api": {
+            "dns_zone_domain": "[BASE_DNS_ZONE_NAME_PLACEHOLDER]",
+            "dns_zone_role_arn": "[DNS_ROLE_ARN_PLACEHOLDER]",
+            "route53_hosted_zone_id": "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]",
+            "records": [
+                {
+                    "name": "[BASE_APP_MANAGEMENT_API_HOST_PLACEHOLDER]",
+                    "type": "A",
+                    "alias_target": {
+                        "hosted_zone_id": {
+                            "source": "resource_attribute",
+                            "resource_logical_name": "ApiCustomDomainResumeManagerApiV1",
+                            "attribute": "domain_name_alias_hosted_zone_id"
+                        },
+                        "dns_name": {
+                            "source": "resource_attribute",
+                            "resource_logical_name": "ApiCustomDomainResumeManagerApiV1",
+                            "attribute": "domain_name_alias_domain_name"
+                        }
+                    }
+                }
+            ],
+            "custom_resources": {
+                "domain-dns-records": {
+                    "logical_name": "CustomResourceDnsRecordResumeManagerApi",
+                    "resource_type": "Custom::CreateDNSRecords",
+                    "provider": "cfn-provider-create-dns-records",
+                    "depends_on": [
+                        "ApiCustomDomainResumeManagerApiV1",
+                        "ResumeManagerApi"
+                    ]
+                }
+            }
+        },
+        "resume_website": {
+            "dns_zone_domain": "[BASE_DNS_ZONE_NAME_PLACEHOLDER]",
+            "dns_zone_role_arn": "[DNS_ROLE_ARN_PLACEHOLDER]",
+            "route53_hosted_zone_id": "[DNS_HOSTED_ZONE_ID_PLACEHOLDER]",
+            "records": [
+                {
+                    "name": "[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "type": "A",
+                    "alias_target": {
+                        "hosted_zone_id": {
+                            "source": "provided",
+                            "value": "Z2FDTNDATAQYW2"
+                        },
+                        "dns_name": {
+                            "source": "resource_attribute",
+                            "resource_logical_name": "CloudfrontDistributionResumeWebsite",
+                            "attribute": "distribution_domain_name"
+                        }
+                    }
+                },
+                {
+                    "name": "www.[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "type": "A",
+                    "alias_target": {
+                        "hosted_zone_id": {
+                            "source": "provided",
+                            "value": "Z2FDTNDATAQYW2"
+                        },
+                        "dns_name": {
+                            "source": "resource_attribute",
+                            "resource_logical_name": "CloudfrontDistributionResumeWebsite",
+                            "attribute": "distribution_domain_name"
+                        }
+                    }
+                }
+            ],
+            "custom_resources": {
+                "domain-dns-records": {
+                    "logical_name": "CustomResourceDnsRecordResumeWebsite",
+                    "resource_type": "Custom::CreateDNSRecords",
+                    "provider": "cfn-provider-create-dns-records",
+                    "depends_on": [
+                        "CloudfrontDistributionResumeWebsite"
+                    ]
+                }
+            }
+        }
+    }
+}

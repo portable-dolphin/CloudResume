@@ -1,0 +1,9 @@
+{
+    "dynamodb_resumes_table": "[DYNAMODB_RESUMES_TABLE_PLACEHOLDER]",
+    "dynamodb_resume_views_table": "[DYNAMODB_RESUME_VIEWS_TABLE_PLACEHOLDER]",
+    "dynamodb_resume_viewers_table": "[DYNAMODB_RESUME_VIEWERS_TABLE_PLACEHOLDER]",
+    "dynamodb_table_region": "[DYNAMODB_REGION_PLACEHOLDER]",
+    "dynamodb_status_index": "[DYNAMODB_RESUMES_TABLE_STATE_ID_INDEX_PLACEHOLDER]",
+    "Access_Control_Allow_Credentials": "true",
+    "Access_Control_Allow_Origin": "[ACCESS_CONTROL_ALLOW_ORIGIN_PLACEHOLDER]"
+}

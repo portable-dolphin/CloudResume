@@ -1,0 +1,48 @@
+{
+    "topics": {
+        "management_page_login_success": {
+            "logical_name": "SNSTopicManagementPageLoginSuccess",
+            "display_name": "Management Page Login Success",
+            "subscriptions": {
+                "cognito_login_notification_email": {
+                    "logical_name": "SnsSubscriptionLoginNotificationEmail",
+                    "protocol": "EMAIL",
+                    "endpoint": "[COGNITO_LOGIN_NOTIFICATION_EMAIL_STRING]"
+                }
+            },
+            "enforce_ssl": true
+        },
+        "api_gateway_errors": {
+            "logical_name": "SNSTopicApiGatewayErrors",
+            "display_name": "API Gateway Errors",
+            "subscriptions": {
+                "api_gateway_error_notification_email": {
+                    "logical_name": "SnsSubscriptionApiGatewayErrorNotificationEmail",
+                    "protocol": "EMAIL",
+                    "endpoint": "[MONITORING_EMAIL_LIST_PLACEHOLDER]"
+                }
+            },
+            "enforce_ssl": true,
+            "resource_policy": {
+                "logical_name": "SNSTopicPolicyCloudfrontErrors",
+                "policy_name": "Allow-CloudWatch-Publish-Api-Gateway-Errors-Topic"
+            }
+        },
+        "cloud_front_errors": {
+            "logical_name": "SNSTopicCloudfrontErrors",
+            "display_name": "Cloud Front Errors",
+            "subscriptions": {
+                "cloudfront_error_notification_email": {
+                    "logical_name": "SnsSubscriptionCloudfrontErrorNotificationEmail",
+                    "protocol": "EMAIL",
+                    "endpoint": "[MONITORING_EMAIL_LIST_PLACEHOLDER]"
+                }
+            },
+            "enforce_ssl": true,
+            "resource_policy": {
+                "logical_name": "SNSTopicPolicyCloudfrontErrors",
+                "policy_name": "Allow-CloudWatch-Publish-Cloudfront-Errors-Topic"
+            }
+        }
+    }
+}

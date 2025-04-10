@@ -1,0 +1,99 @@
+{
+    "userpools": {
+        "resume_manager_user_pool": {
+            "logical_name": "CognitoUserPoolResumeManager",
+            "name": "Resume Manager User Pool",
+            "feature_plan": "ESSENTIALS",
+            "email": {
+                "type": "cognito",
+                "reply_to": "noreply@[BASE_DOMAIN_NAME_PLACEHOLDER]"
+            },
+            "lambda_triggers": {
+                "post_authentication": {
+                    "name": "post-authentication-trigger",
+                    "sns_topic": "management_page_login_success"
+                },
+                "pre_token_generation": {
+                    "name": "pre-token-generation-trigger"
+                }
+            },
+            "groups": [
+                {
+                    "group_names": "[COGNITO_AUTHORIZED_GROUPS_ARRAY_PLACEHOLDER]",
+                    "description": "Resume managers"
+                }
+            ],
+            "authentication": {
+                "account_recovery": "NONE",
+                "auto_verify": [
+                    "email"
+                ],
+                "mfa": "OFF",
+                "mfa_second_factor": [
+                    "otp"
+                ],
+                "password_policy": {
+                    "min_length": 16,
+                    "require_digits": true,
+                    "require_lowercase": true,
+                    "require_symbols": true,
+                    "require_uppercase": true
+                },
+                "self_sign_up_enabled": false,
+                "sign_in_aliases": {
+                    "username": true,
+                    "email": true
+                },
+                "sign_in_case_sensitive": false,
+                "standard_attributes": {
+                    "family_name": {
+                        "required": true,
+                        "mutable": true
+                    },
+                    "email": {
+                        "required": true,
+                        "mutable": true
+                    }
+                }
+            },
+            "app_clients": {
+                "resume-manager": {
+                    "logical_name": "CognitoUserPoolResumeManagerAppClient",
+                    "name": "Resume Manager",
+                    "access_token_validity": "PT60M",
+                    "auth_flows": {
+                        "user_srp": true
+                    },
+                    "auth_session_validity": "PT3M",
+                    "oauth_settings": {
+                        "callback_urls": [
+                            "[BASE_DOMAIN_URL_PLACEHOLDER]/management-zone/login-verify.html",
+                            "[BASE_DOMAIN_URL_PLACEHOLDER]/management-zone/manager/index.html"
+                        ],
+                        "default_redirect_uri": "[BASE_DOMAIN_URL_PLACEHOLDER]/management-zone/login-verify.html",
+                        "oauth_flows": {
+                            "authorization_code_grant": true
+                        },
+                        "logout_urls": [
+                            "[BASE_DOMAIN_URL_PLACEHOLDER]/management-zone/logout.html"
+                        ],
+                        "oauth_scopes": [
+                            "EMAIL",
+                            "OPENID"
+                        ]
+                    },
+                    "refresh_token_validity": "P7D"
+                }
+            },
+            "domain": {
+                "logical_name": "CognitoUserPoolResumeManagerDomain",
+                "custom_domain_name": "[BASE_APP_MANAGEMENT_ZONE_HOST_PLACEHOLDER]",
+                "certificate": "app_management_zone_certificate",
+                "dns_recordset": "app_management_zone",
+                "depends_on": [
+                    "CustomResourceCreateAndValidateCertificateAppManagementZone"
+                ]
+            }
+        }
+    }
+}

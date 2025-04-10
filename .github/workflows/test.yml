@@ -1,0 +1,88 @@
+name: Test Env
+on:
+  workflow_call:
+    inputs:
+      deploy_env:
+        required: true
+        type: string
+    secrets:
+      dns_zone_domain:
+        required: true
+      dev_blog_url:
+        required: true
+      cognito_initial_user_email:
+        required: true
+      cognito_initial_user_password:
+        required: true
+      cognito_initial_user_given_name:
+        required: true
+      initial_resume_docx_url:
+        required: true
+      initial_resume_source_code_url:
+        required: true
+      test_resume_docx_url:
+        required: true
+      test_resume_source_code_url:
+        required: true
+      test_modified_resume_docx_url:
+        required: true
+      test_modified_resume_source_code_url:
+        required: true
+      homepage_source_code_url:
+        required: true
+      test_dns_host:
+        required: false
+jobs:
+  TestEnvironmentLinux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pip packages
+        run: pip3 install -r cdk/requirements-dev.txt
+      - name: Test Application
+        shell: bash
+        run: |
+          export APP_DEPLOY_ENV=${{ inputs.deploy_env }}
+          export APP_DNS_ZONE_DOMAIN=${{ secrets.dns_zone_domain }}
+          export APP_DEV_BLOG_URL=${{ secrets.dev_blog_url }}
+          export APP_COGNITO_INITIAL_USER_EMAIL=${{ secrets.cognito_initial_user_email }}
+          export APP_COGNITO_INITIAL_USER_PASSWORD=${{ secrets.cognito_initial_user_password }}
+          export APP_COGNITO_INITIAL_USER_GIVEN_NAME=${{ secrets.cognito_initial_user_given_name }}
+          export APP_INITIAL_RESUME_DOCX_URL=${{ secrets.initial_resume_docx_url }}
+          export APP_INITIAL_RESUME_SOURCE_CODE_URL=${{ secrets.initial_resume_source_code_url }}
+          export APP_TEST_RESUME_DOCX_URL=${{ secrets.test_resume_docx_url }}
+          export APP_TEST_RESUME_SOURCE_CODE_URL=${{ secrets.test_resume_source_code_url }}
+          export APP_TEST_MODIFIED_RESUME_DOCX_URL=${{ secrets.test_modified_resume_docx_url }}
+          export APP_TEST_MODIFIED_RESUME_SOURCE_CODE_URL=${{ secrets.test_modified_resume_source_code_url }}
+          export APP_HOMEPAGE_SOURCE_CODE_URL=${{ secrets.homepage_source_code_url }}
+          if [ ${{ secrets.test_dns_host }} != '' ]; then
+            export APP_TEST_DNS_HOST=${{ secrets.test_dns_host }}
+          fi
+          pytest -n 16 --reruns 2 -vv -rsfE test/test_resume_app.py
+
+  # Disabled. Uploading files via Safari webdriver is not supported
+  # TestEnvironmentMac:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Install pip packages
+  #       shell: bash
+  #       run: |
+  #         pip install -r cdk/requirements-dev.txt
+  #     - name: Test Application
+  #       shell: bash
+  #       run: |
+  #         export APP_DEPLOY_ENV=${{ inputs.deploy_env }}
+  #         export APP_DNS_ZONE_DOMAIN=${{ secrets.dns_zone_domain }}
+  #         export APP_DEV_BLOG_URL=${{ secrets.dev_blog_url }}
+  #         export APP_COGNITO_INITIAL_USER_EMAIL=${{ secrets.cognito_initial_user_email }}
+  #         export APP_COGNITO_INITIAL_USER_PASSWORD=${{ secrets.cognito_initial_user_password }}
+  #         export APP_COGNITO_INITIAL_USER_GIVEN_NAME=${{ secrets.cognito_initial_user_given_name }}
+  #         export APP_INITIAL_RESUME_URL=${{ secrets.initial_resume_url }}
+  #         export APP_TEST_RESUME_URL=${{ secrets.test_resume_url }}
+  #         export APP_TEST_MODIFIED_RESUME_URL=${{ secrets.test_modified_resume_url }}
+  #         export APP_HOMEPAGE_SOURCE_CODE_URL=${{ secrets.homepage_source_code_url }}
+  #         if [ ${{ secrets.test_dns_host }} !=  '' ]; then
+  #           export APP_TEST_DNS_HOST=${{ secrets.test_dns_host }}
+  #         fi
+  #         pytest -vv -rsfE -m debug_test test/test_resume_app.py

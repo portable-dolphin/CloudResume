@@ -1,0 +1,2255 @@
+{
+    "ResumeManagerApi": {
+        "logical_name": "ResumeManagerApi",
+        "configuration": {
+            "custom_domains": [
+                {
+                    "logical_name": "ApiCustomDomainResumeManagerApiV1",
+                    "domain_host": "app-management-api.[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "stage": "v1",
+                    "path": "v1",
+                    "certificate": "resume_manager_certificate",
+                    "dns_recordset": "resume_manager_api",
+                    "depends_on": [
+                        "CustomResourceCreateAndValidateCertificateResumeManager"
+                    ]
+                }
+            ],
+            "description": "API for resume manager website",
+            "enable_default_cloudwatch_role": true,
+            "endpoint_type": "EDGE",
+            "endpoint_export_name": "resume_manager_api_endpoint",
+            "retain_default_cloudwatch_role": false,
+            "stages": {
+                "v1": {
+                    "logical_name": "ApiStageResumeManagerApiV1",
+                    "deployment": {
+                        "logical_name": "ApiDeploymentResumeManagerApiV1",
+                        "retain_deployments": false
+                    },
+                    "caching_enabled": false,
+                    "metrics_enabled": true,
+                    "logging_level": "INFO",
+                    "throttling_burst_limit": 100,
+                    "throttling_rate_limit": 200,
+                    "tracing_enabled": false
+                }
+            }
+        },
+        "resources": {
+            "management-zone": {
+                "resources": {
+                    "manager-backend": {
+                        "resources": {
+                            "add-resume": {
+                                "methods": {
+                                    "PUT": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "PutResume"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Add-Resume-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,PUT'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "delete-dangling-resumes": {
+                                "methods": {
+                                    "DELETE": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "DanglingResumes"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Delete-Dangling-Resumes-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,DELETE'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "delete-resume": {
+                                "methods": {
+                                    "DELETE": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "DeleteOrUndeleteResume"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Delete-Resume-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,DELETE'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "generate-presigned-url": {
+                                "methods": {
+                                    "POST": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "GeneratePresignedUrl"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Generate-Presigned-Url-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,POST'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "get-dangling-resumes": {
+                                "methods": {
+                                    "POST": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "DanglingResumes"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Get-Dangling-Resumes-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,POST'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "get-resume": {
+                                "methods": {
+                                    "POST": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "GetResume"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Get-Resume-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,POST'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "list-all-resumes": {
+                                "methods": {
+                                    "POST": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "ListResumes"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-List-All-Resumes-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,POST'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "permanently-delete-resume": {
+                                "methods": {
+                                    "DELETE": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "DeleteOrUndeleteResume"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Permanently-Delete-Resume-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,DELETE'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "undelete-resume": {
+                                "methods": {
+                                    "POST": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "DeleteOrUndeleteResume"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Undelete-Resume-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,POST'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "update-resume": {
+                                "methods": {
+                                    "PATCH": {
+                                        "method_request": {
+                                            "body_validation": {
+                                                "application/json": "PatchResume"
+                                            },
+                                            "authorization": "management-zone-token-authorizer",
+                                            "authorization_type": "CUSTOM",
+                                            "request_validator": {
+                                                "validate_body": true,
+                                                "validate_parameters": false
+                                            }
+                                        },
+                                        "integration_request": {
+                                            "integration_type": "lambda",
+                                            "lambda_proxy": true,
+                                            "lambda_function": {
+                                                "name": "manager-backend",
+                                                "alias": "latest_version"
+                                            },
+                                            "post_deployment_custom_resources": {
+                                                "Api-Integration-Update-Resume-Backend-Manager": {
+                                                    "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                                    "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                                    "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                                    "depends_on": [
+                                                        "CustomResourceReplacePlaceholdersManagerBackend"
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        "integration_response": {},
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "401",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "403",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "404",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "status_code": "500",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Origin"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "ERROR"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "OPTIONS": {
+                                        "method_request": {},
+                                        "integration_request": {
+                                            "integration_type": "mock",
+                                            "request_templates": {
+                                                "application/json": "{\"statusCode\": 200}"
+                                            }
+                                        },
+                                        "integration_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "header_mappings": [
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Credentials",
+                                                            "value": "'true'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Headers",
+                                                            "value": "'Content-Type,Authorization,X-PINGOTHER'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Methods",
+                                                            "value": "'OPTIONS,PATCH'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Allow-Origin",
+                                                            "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                        },
+                                                        {
+                                                            "name": "method.response.header.Access-Control-Max-Age",
+                                                            "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "method_response": {
+                                            "responses": [
+                                                {
+                                                    "status_code": "200",
+                                                    "headers": [
+                                                        "Access-Control-Allow-Credentials",
+                                                        "Access-Control-Allow-Headers",
+                                                        "Access-Control-Allow-Methods",
+                                                        "Access-Control-Allow-Origin",
+                                                        "Access-Control-Max-Age"
+                                                    ],
+                                                    "body": {
+                                                        "models": {
+                                                            "application/json": "EMPTY"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "validate": {
+                        "methods": {
+                            "POST": {
+                                "method_request": {
+                                    "body_validation": {
+                                        "application/json": "Tokens"
+                                    },
+                                    "authorization": false,
+                                    "request_validator": {
+                                        "validate_body": true,
+                                        "validate_parameters": false
+                                    }
+                                },
+                                "integration_request": {
+                                    "integration_type": "lambda",
+                                    "lambda_proxy": false,
+                                    "request_templates": {
+                                        "application/json": "##  See https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n##  This template will pass through all parameters including path, querystring, header, stage variables, and context through to the integration endpoint via the body/payload\n#set($allParams = $input.params())\n{\n\"body\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\" : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\",\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\" : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\",\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\",\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\",\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\",\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\",\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\",\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"$context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\",\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" : \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\n    }\n}"
+                                    },
+                                    "lambda_function": {
+                                        "name": "verify-management-zone-tokens",
+                                        "alias": "latest_version"
+                                    },
+                                    "post_deployment_custom_resources": {
+                                        "Api-Integration-Validate-Backend-Manager": {
+                                            "logical_name": "CustomResourceUpdateApiIntegrationBackendManager",
+                                            "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                            "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                            "depends_on": [
+                                                "CustomResourceReplacePlaceholdersVerifyManagementZoneTokens"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "integration_response": {
+                                    "responses": [
+                                        {
+                                            "status_code": "200",
+                                            "header_mappings": [
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Origin",
+                                                    "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "status_code": "307",
+                                            "header_mappings": [
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Origin",
+                                                    "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "status_code": "401",
+                                            "header_mappings": [
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Origin",
+                                                    "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "status_code": "403",
+                                            "header_mappings": [
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Origin",
+                                                    "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "status_code": "500",
+                                            "header_mappings": [
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Origin",
+                                                    "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "method_response": {
+                                    "responses": [
+                                        {
+                                            "status_code": "200",
+                                            "headers": [
+                                                "Access-Control-Allow-Origin"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "EMPTY"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "status_code": "307",
+                                            "headers": [
+                                                "Access-Control-Allow-Origin"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "EMPTY"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "status_code": "401",
+                                            "headers": [
+                                                "Access-Control-Allow-Origin"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "ERROR"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "status_code": "403",
+                                            "headers": [
+                                                "Access-Control-Allow-Origin"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "ERROR"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "status_code": "500",
+                                            "headers": [
+                                                "Access-Control-Allow-Origin"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "ERROR"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "OPTIONS": {
+                                "method_request": {},
+                                "integration_request": {
+                                    "integration_type": "mock",
+                                    "request_templates": {
+                                        "application/json": "{\"statusCode\": 200}"
+                                    }
+                                },
+                                "integration_response": {
+                                    "responses": [
+                                        {
+                                            "status_code": "200",
+                                            "header_mappings": [
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Headers",
+                                                    "value": "'Content-Type,X-PINGOTHER'"
+                                                },
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Methods",
+                                                    "value": "'OPTIONS,POST'"
+                                                },
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Origin",
+                                                    "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                },
+                                                {
+                                                    "name": "method.response.header.Access-Control-Max-Age",
+                                                    "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "method_response": {
+                                    "responses": [
+                                        {
+                                            "status_code": "200",
+                                            "headers": [
+                                                "Access-Control-Allow-Headers",
+                                                "Access-Control-Allow-Methods",
+                                                "Access-Control-Allow-Origin",
+                                                "Access-Control-Max-Age"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "EMPTY"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "authorizers": {
+            "management-zone-token-authorizer": {
+                "logical_name": "ManagementZoneTokenAuthorizer",
+                "authorizer_type": "TOKEN",
+                "token_source": "Authorization",
+                "token_validation": "[a-zA-Z0-9_-]*\\.[a-zA-Z0-9_-]*\\.[a-zA-Z0-9_-]*",
+                "lambda_function": "authorize-management-zone-api-gateway",
+                "function_alias": "latest_version"
+            }
+        },
+        "gateway_responses": {
+            "DEFAULT_4_XX": {
+                "logical_name": "Default4XX",
+                "headers": {
+                    "Access-Control-Allow-Credentials": "'true'",
+                    "Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
+                    "Access-Control-Allow-Origin": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                },
+                "templates": {
+                        "application/json": "{\"message\":$context.error.messageString}"
+                }
+            },
+            "DEFAULT_5_XX": {
+                "logical_name": "Default5XX",
+                "headers": {
+                    "Access-Control-Allow-Credentials": "'true'",
+                    "Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
+                    "Access-Control-Allow-Origin": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                },
+                "templates": {
+                        "application/json": "{\"message\":$context.error.messageString}"
+                }
+            }
+        },
+        "models": {
+            "DanglingResumes": {
+                "logical_name": "ModelDanglingResumes",
+                "content_type": "application/json",
+                "model": {
+                    "title": "DanglingResumesModel",
+                    "type": "object",
+                    "additional_properties": false
+                }
+            },
+            "DeleteOrUndeleteResume": {
+                "logical_name": "ModelDeleteOrUndeleteResume",
+                "content_type": "application/json",
+                "model": {
+                    "type": "object",
+                    "required": ["id"],
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    },
+                    "title": "DeleteResumeModel",
+                    "additional_properties": false
+                }
+            },
+            "GeneratePresignedUrl": {
+                "logical_name": "ModelGeneratePresignedUrl",
+                "content_type": "application/json",
+                "model": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    },
+                    "additional_properties": false,
+                    "title": "GeneratePresignedUrlModel"
+                }
+            },
+            "GetResume": {
+                "logical_name": "ModelGetResume",
+                "content_type": "application/json",
+                "model": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "GetResumeModel",
+                    "type": "object",
+                    "one_of": [
+                        {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            },
+                            "additional_properties": false
+                        },
+                        {
+                            "required": [
+                                "id", "deleted"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "minLength": 1
+                                },
+                                "deleted": {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            },
+                            "additional_properties": false
+                        }
+                    ]
+                }
+            },
+            "ListResumes": {
+                "logical_name": "ModelListResumes",
+                "content_type": "application/json",
+                "model": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "ListResumesModel",
+                    "type": "object",
+                    "one_of": [
+                        {
+                            "required": [
+                                "deleted"
+                            ],
+                            "properties": {
+                                "deleted": {
+                                    "type": "boolean",
+                                    "enum": [
+                                        true
+                                    ]
+                                }
+                            },
+                            "additional_properties": false
+                        },
+                        {
+                            "properties": {},
+                            "additional_properties": false
+                        }
+                    ]
+                }
+            },
+            "PatchResume": {
+                "logical_name": "ModelPatchResume",
+                "content_type": "application/json",
+                "model": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "title": "PatchResumeModel",
+                    "type": "object",
+                    "all_of": [
+                        {
+                            "required": [
+                                "id"
+                            ]
+                        },
+                        {
+                            "any_of": [
+                                {
+                                    "required": [
+                                        "company"
+                                    ]
+                                },
+                                {
+                                    "required": [
+                                        "job_title"
+                                    ]
+                                },
+                                {
+                                    "required": [
+                                        "job_posting"
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "company": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "job_title": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "job_posting": {
+                            "type": "string",
+                            "pattern": "^https?://.*$",
+                            "minLength": 1
+                        }
+                    },
+                    "additional_properties": false
+                }
+            },
+            "PutResume": {
+                "logical_name": "ModelPutResume",
+                "content_type": "application/json",
+                "model": {
+                    "type": "object",
+                    "required": ["company", "job_posting", "job_title"],
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "company": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "job_title": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "job_posting": {
+                            "type": "string",
+                            "minLength": 1,
+                            "pattern": "^https?://.*$"
+                        }
+                    },
+                    "title": "PutResumeModel",
+                    "additional_properties": false
+                }
+            },
+            "Tokens": {
+                "logical_name": "ModelTokens",
+                "content_type": "application/json",
+                "model": {
+                    "type": "object",
+                    "properties": {
+                        "access_token": {
+                            "type": "string"
+                        },
+                        "id_token": {
+                            "type": "string"
+                        }
+                    },
+                    "title": "tokenModel"
+                }
+            }
+        }
+    },
+    "ResumeApi": {
+        "logical_name": "ResumeApi",
+        "configuration": {
+            "custom_domains": [
+                {
+                    "logical_name": "ApiCustomDomainResumeApiV1",
+                    "stage": "v1",
+                    "domain_host": "api.[BASE_DOMAIN_NAME_PLACEHOLDER]",
+                    "path": "v1",
+                    "certificate": "resume_api_certificate",
+                    "dns_recordset": "resume_api",
+                    "depends_on": [
+                        "CustomResourceCreateAndValidateCertificateResumeAPI"
+                    ]
+                }
+            ],
+            "description": "API for resume front-end website",
+            "enable_default_cloudwatch_role": true,
+            "endpoint_type": "EDGE",
+            "endpoint_export_name": "resume_api_endpoint",
+            "retain_default_cloudwatch_role": false,
+            "stages": {
+                "v1": {
+                    "logical_name": "ApiStageResumeApiV1",
+                    "deployment": {
+                        "logical_name": "ApiDeploymentResumeApiV1",
+                        "retain_deployments": false
+                    },
+                    "caching_enabled": false,
+                    "metrics_enabled": true,
+                    "logging_level": "ERROR",
+                    "throttling_burst_limit": 100,
+                    "throttling_rate_limit": 200,
+                    "tracing_enabled": false
+                }
+            }
+        },
+        "resources": {
+            "resumes": {
+                "resources": {
+                    "get-view-count": {
+                        "methods": {
+                            "POST": {
+                                "method_request": {
+                                    "body_validation": {
+                                        "application/json": "GetViewCount"
+                                    },
+                                    "request_validator": {
+                                        "validate_body": true,
+                                        "validate_parameters": false
+                                    }
+                                },
+                                "integration_request": {
+                                    "integration_type": "lambda",
+                                    "lambda_proxy": true,
+                                    "lambda_function": {
+                                        "name": "resume-backend",
+                                        "alias": "latest_version"
+                                    },
+                                    "post_deployment_custom_resources": {
+                                        "Api-Integration-Get-View-Count-Resume-Backend": {
+                                            "logical_name": "CustomResourceUpdateApiIntegrationResumeBackend",
+                                            "resource_type": "Custom::ApiGatewayIntegrationUpdater",
+                                            "provider": "cfn-provider-update-api-gateway-lambda-integration-versions",
+                                            "depends_on": [
+                                                "CustomResourceReplacePlaceholdersResumeBackend"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "integration_response": {},
+                                "method_response": {
+                                    "responses": [
+                                        {
+                                            "status_code": "200",
+                                            "headers": [
+                                                "Access-Control-Allow-Origin"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "EMPTY"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "status_code": "404",
+                                            "headers": [
+                                                "Access-Control-Allow-Origin"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "ERROR"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "status_code": "500",
+                                            "headers": [
+                                                "Access-Control-Allow-Origin"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "ERROR"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            },
+                            "OPTIONS": {
+                                "method_request": {},
+                                "integration_request": {
+                                    "integration_type": "mock",
+                                    "request_templates": {
+                                        "application/json": "{\"statusCode\": 200}"
+                                    }
+                                },
+                                "integration_response": {
+                                    "responses": [
+                                        {
+                                            "status_code": "200",
+                                            "header_mappings": [
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Headers",
+                                                    "value": "'Content-Type,X-PINGOTHER'"
+                                                },
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Methods",
+                                                    "value": "'OPTIONS,POST'"
+                                                },
+                                                {
+                                                    "name": "method.response.header.Access-Control-Allow-Origin",
+                                                    "value": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                                                },
+                                                {
+                                                    "name": "method.response.header.Access-Control-Max-Age",
+                                                    "value": "'[CORS_PREFLIGHT_MAX_AGE_PLACEHOLDER]'"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "method_response": {
+                                    "responses": [
+                                        {
+                                            "status_code": "200",
+                                            "headers": [
+                                                "Access-Control-Allow-Headers",
+                                                "Access-Control-Allow-Methods",
+                                                "Access-Control-Allow-Origin",
+                                                "Access-Control-Max-Age"
+                                            ],
+                                            "body": {
+                                                "models": {
+                                                    "application/json": "EMPTY"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "gateway_responses": {
+            "DEFAULT_4_XX": {
+                "logical_name": "GatewayResponseDefault4XX",
+                "headers": {
+                    "Access-Control-Allow-Credentials": "'true'",
+                    "Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
+                    "Access-Control-Allow-Origin": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                }
+            },
+            "DEFAULT_5_XX": {
+                "logical_name": "GatewayResponseDefault5XX",
+                "headers": {
+                    "Access-Control-Allow-Credentials": "'true'",
+                    "Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
+                    "Access-Control-Allow-Origin": "'[BASE_DOMAIN_URL_PLACEHOLDER]'"
+                }
+            }
+        },
+        "models": {
+            "GetViewCount": {
+                "logical_name": "ModelGetViewCount",
+                "content_type": "application/json",
+                "model": {
+                    "type": "object",
+                    "required": ["id"],
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    },
+                    "title": "GetViewCountModel"
+                }
+            }
+        }
+    }
+}

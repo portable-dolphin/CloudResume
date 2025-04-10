@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Resume Manager</title>
+    <link rel="icon" href="/icons/favicon.ico">
+    <link rel="icon" type="image/png" href="/icons/favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="/icons/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/icons/favicon-32x32.png" sizes="48x48" />
+    <link rel="icon" type="image/png" href="/icons/favicon-32x32.png" sizes="92x92" />
+    <link rel="icon" type="image/png" href="/icons/favicon-196x196.png" sizes="196x196" />
+    <link rel="icon" type="image/png" href="/icons/favicon-512x512.png" sizes="512x512" />
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <script type="module" src="script.js"></script>
+  </head>
+
+  <body>
+    <div id="overlay">
+        <div id="welcome-div">
+            <h2 id="welcome-h2"></h2>
+        </div>
+        <div id="status-div"></div>
+        <div id="table-div">
+            <table id="resume-table" class="table">
+                <thead>
+                    <tr>
+                        <th id="id-header">Resume ID</th>
+                        <th id="company-header">Company</th>
+                        <th id="job-title-header">Job Title</th>
+                        <th id="job-posting-header">Job Posting</th>
+                        <th id="resume-url-header">Resume URL</th>
+                        <th id="date-created-header">Date Created</th>
+                        <th id="views-header">Views</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+            <div class="inputs-and-buttons">
+                <div class="button-group">
+                    <button id="add-resume-selector" class="resume-view-active disable-while-add-or-modify">Add Resume</button>
+                    <button id="modify-resume-selector" class="resume-view-active active-resume-action disable-on-load disable-while-add-or-modify" disabled>Modify Resume</button>
+                    <button id="delete-resume-action" class="resume-view-active active-resume-action disable-on-load disable-while-add-or-modify" disabled>Delete Resume</button>
+                    <button id="undelete-resume-action" class="resume-view-deleted deleted-resume-action disable-on-load" disabled>Restore resume</button>
+                    <button id="permanently-delete-resume-action" class="resume-view-deleted deleted-resume-action disable-on-load" disabled>Permanently Delete Resume</button>
+                    <button id="cleanup-dangling-resumes-action">Cleanup Dangling Resumes</button>
+                </div>
+                <div class="button-group">
+                    <button id="refresh-resume-action" class="deleted-resume-action disable-on-load" disabled>Refresh Selected Resume</button>
+                    <button id="refresh-all-resumes-action" class="disable-while-add-or-modify">Refresh All Resumes</button>
+                </div>
+                <div class="button-group">
+                    <button id="view-deleted-resumes-selector" class="resume-view-active disable-while-add-or-modify">View Deleted Resumes</button>
+                    <button id="view-active-resumes-selector" class="resume-view-deleted">View Active Resumes</button>
+                </div>
+                <div id="modify-add-item-outer">
+                    <div class="modify-add-item-inner-inputs">
+                        <b><label id="add-or-modify-resume-label"></label></b>
+                        <label for="resume-id">Resume ID</label>
+                        <label for="company">Company</label>
+                        <label for="job-title">Job Title</label>
+                        <label for="job-posting">Job Posting</label>
+                        <label for="resume-file">Resume file</label>
+                        <p id="inputs-info-paragraph"></p>
+                        <input type="text" id="resume-id-textbox" class="add-modify-input value-required-add" required placeholder="" />
+                        <input type="text" id="company-textbox" class="add-modify-input value-required-add value-required-modify" required placeholder="" />
+                        <input type="text" id="job-title-textbox" class="add-modify-input value-required-add value-required-modify" required placeholder="" />
+                        <input type="text" id="job-posting-textbox" class="add-modify-input value-required-add value-required-modify" required placeholder="" />
+                        <div id="resume-upload-div">
+                            <input type="text" id="resume-file-textbox" class="resume-upload-input add-modify-input value-required-add" required placeholder="" disabled />
+                            <input type="file" id="select-resume-file-input" class="resume-upload-buttons" hidden="true"/>
+                            <button id="select-resume-file-action" class="resume-upload-buttons">Select File</button>
+                            <button id="clear-selected-resume-file-action" class="resume-upload-buttons">Clear File</button>
+                        </div>
+                    </div>
+                    <div class="modify-add-item-inner-buttons">
+                        <button id="modify-resume-action" class="modify-item disable-on-load" disabled>Modify</button>
+                        <button id="add-resume-action" class="add-item disable-on-load" disabled>Add Resume</button>
+                        <button id="cancel-add-modify-resume-action" class="modify-item add-item">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="confirm-div-overlay" hidden>
+      <div id="confirm-div">
+        <h2 id="confirm-title"></h2>
+        <p id="confirm-paragraph"></p>
+        <div id="confirm-div-additional-paragraphs"></div>
+        <div id="confirm-buttons-div">
+          <button id="confirm-yes-action" class="confirm-buttons">yes</button>
+          <button id="confirm-no-action" class="confirm-buttons">no</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

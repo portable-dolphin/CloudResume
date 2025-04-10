@@ -1,0 +1,98 @@
+name: Build Env
+on:
+  workflow_call:
+    inputs:
+      deploy_env:
+        required: true
+        type: string
+      stack_prefix:
+        required: true
+        type: string
+      increment_lambda:
+        type: string
+      get_view_count:
+        type: string
+    secrets:
+      deploy_account:
+        required: true
+      dns_zone_domain:
+        required: true
+      dns_zone_account:
+        required: true
+      dns_hosted_zone_id:
+        required: true
+      test_dns_host:
+        required: false
+      cognito_login_notification_email:
+        required: true
+      dev_blog_url:
+        required: true
+      cognito_initial_username:
+        required: true
+      cognito_initial_user_email:
+        required: true
+      cognito_initial_user_password:
+        required: true
+      cognito_initial_user_given_name:
+        required: true
+      monitoring_email_list:
+        required: true
+      homepage_title:
+        required: true
+      aws_github_role:
+        required: true
+      aws_default_region:
+        required: true
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  DeployEnvironment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+      - name: Configure AWS creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.deploy_account }}:role/${{ secrets.aws_github_role }}
+          aws-region: ${{ secrets.aws_default_region }}
+      - name: Install pip packages
+        run: pip3 install -r cdk/requirements.txt
+      - name: Install CDK
+        run: npm install -g aws-cdk@2.176.0
+      - name: Deploy Application
+        shell: bash
+        run: |
+          export APP_DEPLOY_ENV=${{ inputs.deploy_env }}
+          export APP_STACK_PREFIX=${{ inputs.stack_prefix }}
+          export APP_DEPLOY_ACCOUNT=${{ secrets.deploy_account }}
+          export APP_DNS_ZONE_DOMAIN=${{ secrets.dns_zone_domain }}
+          export APP_DNS_ZONE_ACCOUNT=${{ secrets.dns_zone_account }}
+          export APP_DNS_HOSTED_ZONE_ID=${{ secrets.dns_hosted_zone_id }}
+          if [ '${{ secrets.test_dns_host }}' != '' ]; then
+            export APP_TEST_DNS_HOST=${{ secrets.test_dns_host }}
+          fi
+          export APP_COGNITO_LOGIN_NOTIFICATION_EMAIL=${{ secrets.cognito_login_notification_email }}
+          export APP_DEV_BLOG_URL=${{ secrets.dev_blog_url }}
+          export APP_COGNITO_INITIAL_USERNAME=${{ secrets.cognito_initial_username }}
+          export APP_COGNITO_INITIAL_USER_EMAIL=${{ secrets.cognito_initial_user_email }}
+          export APP_COGNITO_INITIAL_USER_PASSWORD=${{ secrets.cognito_initial_user_password }}
+          export APP_COGNITO_INITIAL_USER_GIVEN_NAME=${{ secrets.cognito_initial_user_given_name }}
+          export APP_MONITORING_EMAIL_LIST='${{ secrets.monitoring_email_list }}'
+          export APP_HOMEPAGE_TITLE='${{ secrets.homepage_title }}'
+          if [ '${{ inputs.increment_lambda }}' != '' ]; then
+            echo 'Force Deploying Lambda Functions'
+            export APP_LAMBDA_FUNCTION_INCREMENT=$(od -vAn -N16 -tu8 < /dev/urandom | tr -d ' ')
+          fi
+          if [ '${{ inputs.get_view_count }}' == 'true' ]; then
+            args="${args} --save-view-counter-path view_count"
+          fi
+          python3 deploy_app.py $args
+      - name: Save View Count Artifact
+        if: ${{ inputs.get_view_count == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: view_count
+          path: view_count
+
