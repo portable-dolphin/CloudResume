@@ -642,14 +642,19 @@ class TestResumeApp:
             poll_frequency=(test_vars.driver_wait_poll if poll_frequency is None else poll_frequency),
         )
 
-    def assert_urls_equal(self, url_1, url_2):
+    def assert_urls_equal(self, url_1, url_2, ignore_query_strings=False):
         url_parts = {
             "hypertext": 0,
             "host": 2,
             "path": 3,
         }
-        url_1_parts = url_1.rstrip("/").split("/")
-        url_2_parts = url_2.rstrip("/").split("/")
+        if ignore_query_strings:
+            url_1_parts = url_1.split("?")[0].rstrip("/").split("/")
+            url_2_parts = url_2.split("?")[0].rstrip("/").split("/")
+        else:
+            url_1_parts = url_1.rstrip("/").split("/")
+            url_2_parts = url_2.rstrip("/").split("/")
+
         try:
             url_1_parts[url_parts["hypertext"]] = url_1_parts[url_parts["hypertext"]].lower()
             url_2_parts[url_parts["hypertext"]] = url_2_parts[url_parts["hypertext"]].lower()
@@ -1558,7 +1563,9 @@ class TestResumeApp:
             assert row_elements.resume_url.text == test_vars.row_static_text.resume_url_success
             resume_url = self.manager_get_resume_posting_url(resume_id)
             try:
-                self.assert_urls_equal(row_elements.resume_url_a.get_attribute("href"), resume_url)
+                self.assert_urls_equal(
+                    row_elements.resume_url_a.get_attribute("href"), resume_url, ignore_query_strings=True
+                )
             except NoSuchAttributeException:
                 assert resume_url == None
 

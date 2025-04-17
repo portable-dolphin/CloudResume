@@ -305,10 +305,14 @@ class CreateApi:
 
         request_parameters = {}
         for header in method_config.method_request.header_validation:
-            request_parameters[f"method.request.header.{header.header}"] = header.required
+            request_parameters[f"method.request.header.{header.header}"] = (
+                header.required if "required" in header.keys() else False
+            )
 
         for query_string in method_config.method_request.query_string_validation:
-            request_parameters[f"method.request.querystring.{query_string.query_string}"] = header.required
+            request_parameters[f"method.request.querystring.{query_string.query_string}"] = (
+                query_string.required if "required" in query_string.keys() else False
+            )
 
         if method_config.method_request.request_validator:
             validate_body = (

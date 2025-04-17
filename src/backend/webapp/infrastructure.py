@@ -565,7 +565,7 @@ class create_web_infrastructure:
             function_config.logical_name,
             code=FunctionCode.from_file(file_path=f"{root_dir}/{function_config.code_location}"),
             auto_publish=function_config.auto_publish,
-            function_name=function_name,
+            function_name=f"{function_name}_{env.APP_STACK_PREFIX}",
         )
 
         if (
@@ -580,7 +580,7 @@ class create_web_infrastructure:
                     generate_lambda_custom_resource_cloudfront_function_redirect_placeholders(
                         stack=self.stack,
                         cloudfront_function_logical_name=function_config.logical_name,
-                        cloudfront_function_name=function_name,
+                        cloudfront_function_name=f"{function_name}_{env.APP_STACK_PREFIX}",
                         function_stage="DEVELOPMENT",
                         domain_name=custom_resource_config.domain_name,
                         domain_uri=custom_resource_config.domain_uri,
@@ -652,7 +652,7 @@ class create_web_infrastructure:
         return CachePolicy(
             self.stack,
             policy_config.logical_name,
-            cache_policy_name=policy_name,
+            cache_policy_name=f"{policy_name}_{env.APP_STACK_PREFIX}",
             comment=(policy_config.comment if policy_config.comment else ""),
             cookie_behavior=cookie_behavior,
             default_ttl=default_ttl,
@@ -714,7 +714,7 @@ class create_web_infrastructure:
             comment=(policy_config.comment if policy_config.comment else ""),
             cookie_behavior=cookie_behavior,
             header_behavior=header_behavior,
-            origin_request_policy_name=policy_name,
+            origin_request_policy_name=f"{policy_name}_{env.APP_STACK_PREFIX}",
             query_string_behavior=query_string_behavior,
         )
 
@@ -857,7 +857,7 @@ class create_web_infrastructure:
             cors_behavior=cors_behavior,
             custom_headers_behavior=custom_headers_behavior,
             remove_headers=remove_headers,
-            response_headers_policy_name=policy_name,
+            response_headers_policy_name=f"{policy_name}_{env.APP_STACK_PREFIX}",
             security_headers_behavior=security_headers_behavior,
             server_timing_sampling_rate=server_timing_sampling_rate,
         )

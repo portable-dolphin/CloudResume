@@ -104,6 +104,7 @@ async function getAllResumes() {
                 resumeUrl: response["body"][i]["resume_url"],
                 dateCreated: response["body"][i]["date_created"],
                 views: response["body"][i]["view_count"],
+                noIncrement: response["body"][i]["no_increment_id"],
             };
 
             resumes[viewType[isViewActive]][response["body"][i]["id"]] = resumeItem;
@@ -131,11 +132,12 @@ async function getResume() {
         resumeUrl: response["body"]["resume_url"],
         dateCreated: response["body"]["date_created"],
         views: response["body"]["view_count"],
+        noIncrement: response["body"]["no_increment_id"],
     };
 
     resumes[viewType[isViewActive]][response["body"]["id"]] = resume;
 
-    addResumeToRow(resume["id"], resume["company"], resume["jobTitle"], resume["jobPosting"], resume["resumeUrl"], resume["dateCreated"], resume["views"]);
+    addResumeToRow(resume["id"], resume["company"], resume["jobTitle"], resume["jobPosting"], resume["resumeUrl"], resume["dateCreated"], resume["views"], resume["noIncrement"]);
 }
 
 async function deleteOrUndeleteResume() {
@@ -156,9 +158,19 @@ async function deleteOrUndeleteResume() {
                 resumeUrl: response["body"]["resume_url"],
                 dateCreated: response["body"]["date_created"],
                 views: response["body"]["view_count"],
+                noIncrement: response["body"]["no_increment_id"],
             };
             resumes[viewType[isViewActive]][response["body"]["id"]] = resume;
-            addResumeToRow(resume["id"], resume["company"], resume["jobTitle"], resume["jobPosting"], resume["resumeUrl"], resume["dateCreated"], resume["views"]);
+            addResumeToRow(
+                resume["id"],
+                resume["company"],
+                resume["jobTitle"],
+                resume["jobPosting"],
+                resume["resumeUrl"],
+                resume["dateCreated"],
+                resume["views"],
+                resume["no_increment_id"],
+            );
             if (Object.keys(resumes).includes(viewType[!isViewActive])) {
                 resumes[viewType[!isViewActive]][resumeId] = resumes[viewType[isViewActive]][resumeId];
             }
@@ -210,7 +222,7 @@ async function switchResumeView() {
 }
 
 async function refreshResume() {
-    addResumeToRow(selectedItem, "", "", "", "", "", "", false);
+    addResumeToRow(selectedItem, "", "", "", "", "", "", "", false);
     getResume();
 }
 
@@ -221,7 +233,7 @@ async function refreshAllResumes() {
     switchResumeSelector.disabled = true;
     selectRow();
     clearTable();
-    addResumeToRow("Refreshing Resumes...", "", "", "", "", "", "", false);
+    addResumeToRow("Refreshing Resumes...", "", "", "", "", "", "", "", false);
     await getAllResumes();
     refreshAllResumesSelector.disabled = false;
     switchResumeSelector.disabled = false;
@@ -286,6 +298,7 @@ async function updateResume() {
             const dateCreated = resumes[viewType[isViewActive]][resumeId]["dateCreated"];
             const views = resumes[viewType[isViewActive]][resumeId]["views"];
             const infoParagraph = document.querySelector(elementIds["inputsInfoParagraph"]);
+            const noIncrement = resumes[viewType[isViewActive]][resumeId]["noIncrement"];
             resumeItem = {
                 id: resumeId,
                 company: companyValue,
@@ -294,6 +307,7 @@ async function updateResume() {
                 resumeUrl: resumeParsePendingMessage,
                 dateCreated: dateCreated,
                 views: views,
+                noIncrement: noIncrement,
             };
 
             const presignedUrlResponse = await generatePresignedUrl(resumeId);
@@ -335,6 +349,7 @@ async function updateResume() {
                         resumeUrl: response["body"]["resume_url"],
                         dateCreated: response["body"]["date_created"],
                         views: response["body"]["view_count"],
+                        noIncrement: response["body"]["no_increment_id"],
                     };
                 }
             } finally {
@@ -353,6 +368,7 @@ async function updateResume() {
         resumeItem["resumeUrl"],
         resumeItem["dateCreated"],
         resumeItem["views"],
+        resumeItem["noIncrement"],
     );
 
     clearAddUpdateInputs();
@@ -405,6 +421,7 @@ async function addResume() {
                     resumeUrl: addResumeResponse["body"]["resume_url"],
                     dateCreated: addResumeResponse["body"]["date_created"],
                     views: addResumeResponse["body"]["view_count"],
+                    noIncrement: addResumeResponse["body"]["no_increment_id"],
                 };
 
                 resumes[viewType[isViewActive]][addResumeResponse["body"]["id"]] = resumeItem;
@@ -493,6 +510,7 @@ async function checkForResumeUrlUpdates(resumeId, oldResumeUrl) {
                         resumeUrl: response["body"]["resume_url"],
                         dateCreated: response["body"]["date_created"],
                         views: response["body"]["view_count"],
+                        noIncrement: response["body"]["no_increment_id"],
                     };
 
                     resumes[viewType[isViewActive]][response["body"]["id"]] = resumeItem;
@@ -504,6 +522,7 @@ async function checkForResumeUrlUpdates(resumeId, oldResumeUrl) {
                         resumeItem["resumeUrl"],
                         resumeItem["dateCreated"],
                         resumeItem["views"],
+                        resumeItem["noIncrement"],
                     );
                     newResumeUrl = resumeItem["resumeUrl"];
                     break;
@@ -680,7 +699,7 @@ async function populateTable() {
     selectRow();
     clearTable();
     if (resumes[viewType[isViewActive]] === undefined) {
-        addResumeToRow("Loading Resumes...", "", "", "", "", "", "", false);
+        addResumeToRow("Loading Resumes...", "", "", "", "", "", "", "", false);
         await getAllResumes();
         clearTable();
     }
@@ -697,7 +716,8 @@ async function populateTable() {
         const resumeUrl = resume["resumeUrl"] === undefined || resume["resumeUrl"] == null ? "" : resume["resumeUrl"];
         const dateCreated = resume["dateCreated"] === undefined || resume["dateCreated"] == null ? "" : resume["dateCreated"];
         const views = resume["views"] === undefined || resume["views"] == null ? "" : resume["views"];
-        addResumeToRow(id, company, jobTitle, jobPosting, resumeUrl, dateCreated, views);
+        const noIncrement = resume["noIncrement"] === undefined || resume["noIncrement"] == null ? "" : resume["noIncrement"];
+        addResumeToRow(id, company, jobTitle, jobPosting, resumeUrl, dateCreated, views, noIncrement);
     }
 }
 
@@ -712,7 +732,7 @@ function clearTable() {
     }
 }
 
-function addResumeToRow(id, company, jobTitle, jobPosting, resumeUrl, dateCreated, views, selectable) {
+function addResumeToRow(id, company, jobTitle, jobPosting, resumeUrl, dateCreated, views, noIncrement, selectable) {
     if (id === undefined) {
         throw new Error("id is a required parameter");
     }
@@ -733,6 +753,9 @@ function addResumeToRow(id, company, jobTitle, jobPosting, resumeUrl, dateCreate
     }
     if (views === undefined) {
         throw new Error("views is a required parameter");
+    }
+    if (noIncrement === undefined) {
+        throw new Error("noIncrement is a required parameter");
     }
     if (selectable === undefined) {
         selectable = true;
@@ -816,7 +839,7 @@ function addResumeToRow(id, company, jobTitle, jobPosting, resumeUrl, dateCreate
                 }
                 cellResumeUrl.appendChild(resumeUrlA);
             }
-            resumeUrlA.href = resumeUrl;
+            resumeUrlA.href = `${resumeUrl}?noIncrement=${noIncrement}`;
         } else {
             cellResumeUrl.innerText = resumeUrl;
         }

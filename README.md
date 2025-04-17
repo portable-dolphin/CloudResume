@@ -456,8 +456,20 @@ Implementation:
                     "**DELETE/GET/HEAD/OPTIONS/POST/PUT/PATCH**": {
                         "method_request": {
                             "body_validation": {
-                                "**ContentType (e.g. application/json)**": "string (!) - must reference a model key from same API definition"
+                                "**ContentType (e.g. application/json)**": "string (!) - must reference a model key from same API definition - Note: body_validation section is not mandatory"
                             },
+                            "header_validation": [
+                                {
+                                    "header": "string (!) - Note: - header_validation section is not mandatory",
+                                    "required": "boolean - Default: false"
+                                }
+                            ],
+                            "query_string_validation": [
+                                {
+                                    "query_string": "string (!) - Note query_string_validation section is not mandatory",
+                                    "required": "boolean - Default: false"
+                                }
+                            ],
                             "authorization": "string - must reference an authorizer key from same API definition",
                             "authorization_type": "string (!?) - Note: Currently CUSTOM is the only valid option - Mandatory only if authorization is set",
                             "request_validator": {
