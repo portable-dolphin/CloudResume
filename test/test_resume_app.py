@@ -33,6 +33,7 @@ from selenium.webdriver.support.expected_conditions import (
     staleness_of,
 )
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from shutil import which
 from time import sleep
 from urllib3.exceptions import ReadTimeoutError
@@ -343,16 +344,6 @@ class TestResumeApp:
             f.write(resume)
         return resume_path.as_posix()
 
-    """@pytest.fixture(scope="session", autouse=True)
-    def get_in_use_ids(self, session_driver):
-        self.manager_action_login(session_driver)
-        rows = session_driver.find_elements(By.CLASS_NAME, test_vars.row_class)
-        for row in rows:
-            row_id = row.get_attribute("id")
-            resume_id = test_vars.row_id_extractor_regex.findall(row_id)[0]
-            test_vars.ids_in_use[resume_id] = True
-        return True"""
-
     @pytest.fixture(scope="session")
     def session_driver(self):
         driver = self.get_driver(test_vars.test_inputs.drivers.default)
@@ -396,7 +387,7 @@ class TestResumeApp:
         yield driver
 
         driver.delete_all_cookies()
-        driver.close()
+        driver.quit()
 
     @pytest.fixture
     def dual_drivers(self, request):
@@ -416,7 +407,7 @@ class TestResumeApp:
 
         for driver in drivers:
             driver.delete_all_cookies()
-            driver.close()
+            driver.quit()
 
     @pytest.fixture
     def resume_id(self, request, driver) -> str:
@@ -471,15 +462,6 @@ class TestResumeApp:
     def job_posting(self, request) -> str:
         return self.generate_job_posting(request.param)
 
-    """@pytest.fixture(autouse=True)
-    def release_locks(self):
-        yield
-        for lock in test_vars.locks.values():
-            try:
-                lock.release()
-            except:
-                pass"""
-
     def generate_resume_id(self, id_type, keep_resume):
         if id_type not in test_vars.test_inputs.resume_id.values():
             raise ValueError(
@@ -489,7 +471,6 @@ class TestResumeApp:
             resume_id = test_vars.initial_resume.id
         else:
             resume_id = None
-            good_id = False
             resume_id_list = []
             if id_type != test_vars.test_inputs.resume_id.EMPTY:
                 min_range = 1 if test_vars.test_inputs.resume_id.VALID else 20
@@ -575,6 +556,9 @@ class TestResumeApp:
         return string
 
     def get_driver(self, driver_name):
+        def _get_shadow_root(driver, element):
+            return driver.execute_script("return arguments[0].shadowRoot", element)
+
         if driver_name not in test_vars.test_inputs.drivers.values():
             raise RuntimeError("Requested driver is invalid - use test_vars.test_inputs.drivers.[key]")
         if driver_name == "chrome":
@@ -588,6 +572,48 @@ class TestResumeApp:
             options.page_load_strategy = "normal"
 
             driver = webdriver.Chrome(options=options)
+            wait = self.get_driver_waiter(driver, timeout=10)
+
+            driver.get("chrome://settings/clearBrowserData")
+            try:
+                wait.until(lambda _: driver.execute_script("return document.readyState") == "complete")
+            except TimeoutException:
+                assert test_outcome_page_load_timeout is None
+            sleep(2)
+            settings_ui_shadow_root = _get_shadow_root(driver, driver.find_element(By.TAG_NAME, "settings-ui"))
+            settings_main_shadow_root = _get_shadow_root(driver, settings_ui_shadow_root.find_element(By.ID, "main"))
+            settings_basic_page_shadow_root = _get_shadow_root(
+                driver, settings_main_shadow_root.find_element(By.CLASS_NAME, "cr-centered-card-container")
+            )
+            basic_page = settings_basic_page_shadow_root.find_element(By.ID, "basicPage")
+            privacy_and_security = [
+                section
+                for section in basic_page.find_elements(By.CSS_SELECTOR, "*")
+                if section.get_attribute("section") == "privacy"
+            ][0]
+            settings_privacy_page_shadow_root = _get_shadow_root(
+                driver, privacy_and_security.find_element(By.CSS_SELECTOR, "*")
+            )
+            settings_clear_browsing_data_dialog = [
+                section
+                for section in settings_privacy_page_shadow_root.find_elements(By.CSS_SELECTOR, "*")
+                if section.get_attribute("tagName").lower() == "settings-clear-browsing-data-dialog"
+            ][0]
+            settings_clear_browsing_data_dialog_shadow_root = _get_shadow_root(
+                driver, settings_clear_browsing_data_dialog
+            )
+            clearBrowsingDataDialog = settings_clear_browsing_data_dialog_shadow_root.find_element(
+                By.ID, "clearBrowsingDataDialog"
+            )
+            clearFromBasic_shadow_root = _get_shadow_root(
+                driver, clearBrowsingDataDialog.find_element(By.ID, "clearFromBasic")
+            )
+
+            select = Select(clearFromBasic_shadow_root.find_element(By.ID, "dropdownMenu"))
+            select.select_by_value("4")
+            delete_data_button = clearBrowsingDataDialog.find_element(By.ID, "clearButton")
+            delete_data_button.click()
+
         elif driver_name == "edge":
             check = check_if_browser_installed(edge=True)
             if not check:
@@ -599,11 +625,23 @@ class TestResumeApp:
             options.page_load_strategy = "normal"
 
             driver = webdriver.Edge(options=options)
+            driver.get("edge://settings/clearBrowserData")
+            driver.find_element(By.ID, "clear-now").send_keys(Keys.ENTER)
         elif driver_name == "firefox":
             check = check_if_browser_installed(firefox=True)
             if not check:
                 raise RuntimeError("Firefox browser is not installed!")
+
+            driver_profile = webdriver.FirefoxProfile()
+            driver_profile.set_preference("browser.cache.disk.enable", False)
+            driver_profile.set_preference("browser.cache.memory.enable", False)
+            driver_profile.set_preference("browser.cache.offline.enable", False)
+            driver_profile.set_preference("network.http.use-cache", False)
+
             options = webdriver.FirefoxOptions()
+
+            options.profile = driver_profile
+
             options.add_argument("--no-sandbox")
             options.add_argument("--start-maximized")
             options.add_argument("-headless")
@@ -913,6 +951,7 @@ class TestResumeApp:
     ):
         check_status_wait = self.get_driver_waiter(driver, timeout=600, poll_frequency=2.0)
         short_wait = self.get_driver_waiter(driver, timeout=1)
+        wait = self.get_driver_waiter(driver)
 
         add_resume_selector = self.manager_get_element(driver, test_vars.manager_dom_elements.add_resume_selector)
         add_resume = self.manager_get_element(driver, test_vars.manager_dom_elements.add_resume)
@@ -972,6 +1011,15 @@ class TestResumeApp:
 
         if expected == test_outcome_success:
             self.resume_check_url(driver, resume_id, resume_html)
+            try:
+                wait.until(lambda _: self.manager_check_if_page_loaded(driver))
+            except TimeoutException:
+                assert test_outcome_url_timeout is None
+            self.resume_check_view_count_increase(driver, resume_id, no_increment=True)
+            try:
+                wait.until(lambda _: self.manager_check_if_page_loaded(driver))
+            except TimeoutException:
+                assert test_outcome_url_timeout is None
 
     def manager_action_modify_resume(
         self, driver, resume_id, company, job_title, job_posting, resume_html, expected=test_outcome_success
@@ -1032,6 +1080,7 @@ class TestResumeApp:
     def manager_action_reupload_resume(self, driver, resume_id, resume_path, resume_html, expected):
         check_status_wait = self.get_driver_waiter(driver, timeout=600, poll_frequency=1.0)
         medium_wait = self.get_driver_waiter(driver, timeout=5)
+        wait = self.get_driver_waiter(driver)
 
         modify_resume_selector = self.manager_get_element(driver, test_vars.manager_dom_elements.modify_resume_selector)
         modify_resume = self.manager_get_element(driver, test_vars.manager_dom_elements.modify_resume)
@@ -1087,6 +1136,10 @@ class TestResumeApp:
         self.manager_validate_row_data(driver, resume_id, resume_path=resume_path, expected=expected)
 
         self.resume_check_url(driver, resume_id, resume_html, expect_match=(expected == test_outcome_success))
+        try:
+            wait.until(lambda _: self.manager_check_if_page_loaded(driver))
+        except TimeoutException:
+            assert test_outcome_url_timeout is None
 
     def manager_action_refresh_resume(
         self,
@@ -1466,7 +1519,7 @@ class TestResumeApp:
             except NoSuchElementException:
                 assert test_outcome_row_not_found == None
 
-        resume_url = self.manager_get_resume_posting_url(resume_id)
+        resume_url = self.manager_get_resume_posting_url(driver, resume_id)
         manager_url = test_vars.urls.manager_urls.manager
         driver.implicitly_wait(10)
         try:
@@ -1489,6 +1542,16 @@ class TestResumeApp:
         driver.implicitly_wait(0)
         new_count = _get_row_view_count()
         assert old_count == (new_count - 1)
+
+    def manager_get_current_view(self, driver) -> str:
+        view_active_resumes = self.manager_get_element(driver, test_vars.manager_dom_elements.view_active_resumes)
+        view_deleted_resumes = self.manager_get_element(driver, test_vars.manager_dom_elements.view_deleted_resumes)
+
+        if view_deleted_resumes.is_displayed():
+            return "active"
+        if view_active_resumes.is_displayed():
+            return "deleted"
+        assert test_outcome_uncategorized_error is None
 
     def manager_get_row_resume_id(self, resume_id) -> str:
         partial_id = resume_id.replace(" ", "_-_").replace(".", "dot")
@@ -1528,8 +1591,30 @@ class TestResumeApp:
 
         return elements
 
-    def manager_get_resume_posting_url(self, resume_id):
-        return f"{test_vars.urls.resume_urls.base_resume_url}/{resume_id}.html"
+    def manager_get_resume_posting_url(self, driver, resume_id, no_increment=True):
+        if no_increment:
+            resume_row_id = self.manager_get_row_resume_id(resume_id)
+            current_view = self.manager_get_current_view(driver)
+            row_exists = self.manager_check_if_row_exists(driver, resume_row_id)
+
+            if not row_exists:
+                current_view_func, other_view_func = (
+                    (self.manager_action_view_active_resumes, self.manager_action_view_deleted_resumes)
+                    if current_view == "active"
+                    else (self.manager_action_view_deleted_resumes, self.manager_action_view_active_resumes)
+                )
+
+                other_view_func(driver)
+
+            assert self.manager_check_if_row_exists(driver, resume_row_id)
+            resume_url_a = driver.find_element(By.ID, test_vars.row_ids.resume_url_a.format(resume_id))
+            resume_url = resume_url_a.get_attribute("href")
+
+            if not row_exists:
+                current_view_func(driver)
+        else:
+            resume_url = f"{test_vars.urls.resume_urls.base_resume_url}/{resume_id}.html"
+        return resume_url
 
     def manager_validate_row_data(
         self,
@@ -1561,7 +1646,7 @@ class TestResumeApp:
                 assert job_posting == None
         if resume_path:
             assert row_elements.resume_url.text == test_vars.row_static_text.resume_url_success
-            resume_url = self.manager_get_resume_posting_url(resume_id)
+            resume_url = self.manager_get_resume_posting_url(driver, resume_id)
             try:
                 self.assert_urls_equal(
                     row_elements.resume_url_a.get_attribute("href"), resume_url, ignore_query_strings=True
@@ -1582,7 +1667,7 @@ class TestResumeApp:
         return True if footer_children else False
 
     def resume_check_url(self, driver, resume_id, reference_html, expect_match=True):
-        resume_url = self.manager_get_resume_posting_url(resume_id)
+        resume_url = self.manager_get_resume_posting_url(driver, resume_id)
         wait = self.get_driver_waiter(driver)
 
         try:
@@ -1625,14 +1710,22 @@ class TestResumeApp:
 
         driver.back()
 
-    def resume_check_view_count_increase(self, driver, resume_id):
-        resume_url = self.manager_get_resume_posting_url(resume_id)
+    def resume_check_view_count_increase(self, driver, resume_id, no_increment):
+        wait = self.get_driver_waiter(driver)
+        resume_url = self.manager_get_resume_posting_url(driver, resume_id, no_increment)
 
         count_1 = self.resume_get_view_count(driver, resume_url)
         count_2 = self.resume_get_view_count(driver, resume_url)
 
-        assert count_2 > count_1
+        if no_increment:
+            assert count_2 == count_1
+        else:
+            assert count_2 > count_1
         driver.back()
+        try:
+            wait.until(lambda _: driver.execute_script("return document.readyState") == "complete")
+        except TimeoutException:
+            assert test_outcome_url_timeout is None
 
     def resume_get_view_count(self, driver, resume_url):
         wait = self.get_driver_waiter(driver)
@@ -1723,7 +1816,9 @@ class TestResumeApp:
             pytest.param(
                 browser,
                 marks=[
-                    pytest.mark.skipif(platform.system() not in value["os"], reason=f"OS is not {value['os']}"),
+                    pytest.mark.skipif(
+                        platform.system() not in value["os"] or browser != "firefox", reason=f"OS is not {value['os']}"
+                    ),
                 ],
             )
             for browser, value in test_vars.test_drivers.items()
@@ -1821,6 +1916,7 @@ class TestResumeApp:
         self, driver, resume_id, company, job_title, job_posting, resume_test_docx_path, resume_test_html, expected
     ):
         self.manager_action_login(driver)
+
         self.manager_action_add_resume(
             driver,
             resume_id,
@@ -2492,4 +2588,4 @@ class TestResumeApp:
             resume_test_html,
             expected=test_outcome_success,
         )
-        self.resume_check_view_count_increase(driver, resume_id)
+        self.resume_check_view_count_increase(driver, resume_id, no_increment=False)

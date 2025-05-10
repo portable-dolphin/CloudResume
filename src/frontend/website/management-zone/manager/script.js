@@ -169,7 +169,7 @@ async function deleteOrUndeleteResume() {
                 resume["resumeUrl"],
                 resume["dateCreated"],
                 resume["views"],
-                resume["no_increment_id"],
+                resume["noIncrement"],
             );
             if (Object.keys(resumes).includes(viewType[!isViewActive])) {
                 resumes[viewType[!isViewActive]][resumeId] = resumes[viewType[isViewActive]][resumeId];

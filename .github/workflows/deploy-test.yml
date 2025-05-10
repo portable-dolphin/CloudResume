@@ -57,7 +57,7 @@ jobs:
       test_dns_host: ${{ secrets.APP_TEST_DNS_HOST }}
 
   TestWorkflowDestroy:
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() || vars.KEEP_TEST_ENV != true }}
     needs: TestWorkflowTest
     uses: ./.github/workflows/destroy.yml
     with:
