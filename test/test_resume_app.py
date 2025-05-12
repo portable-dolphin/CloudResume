@@ -36,7 +36,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from shutil import which
 from time import sleep
-from traceback import format_exc
+from traceback import format_stack
 from urllib3.exceptions import ReadTimeoutError
 
 from .install_browsers import check_if_browser_installed
@@ -1734,7 +1734,7 @@ class TestResumeApp:
                     reference_soup.prettify().splitlines(keepends=True),
                 )
             )
-            result.append(f"\nMatch expected: {expect_match}\nStack trace: {format_exc()}")
+            result.append(f"\nMatch expected: {expect_match}\nStack trace: \n{''.join(format_stack())}")
             warnings.warn(UserWarning("".join(result)))
 
         assert soups_equal == expect_match
