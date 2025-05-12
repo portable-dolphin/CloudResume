@@ -19,6 +19,8 @@ from src.backend.configuration.common import (
     replace_placeholders_in_string,
 )
 
+from vars import env
+
 
 def _create_facade(stack: Stack, facade_name, facade_config):
     if not facade_config.alarm_defaults.action_type:
@@ -50,7 +52,7 @@ def _create_facade(stack: Stack, facade_name, facade_config):
 
     return MonitoringFacade(
         stack,
-        facade_config.logical_name,
+        f"{facade_config.logical_name}_{env.APP_STACK_PREFIX}",
         alarm_factory_defaults=AlarmFactoryDefaults(
             actions_enabled=(
                 facade_config.alarm_defaults.actions_enabled
@@ -118,7 +120,9 @@ def _predefined_alarm_props(
         if disable_actions:
             threshold_props["actions_enabled"] = False
         props[alarm_config.error_name] = {
-            f"{alarm_name_prefix}-{alarm_config.logical_name_suffix}": threshold(**threshold_props)
+            f"{alarm_name_prefix}-{alarm_config.logical_name_suffix}-{env.APP_STACK_PREFIX}": threshold(
+                **threshold_props
+            )
         }
 
     return props

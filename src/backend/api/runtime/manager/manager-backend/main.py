@@ -106,7 +106,7 @@ def handler(event, context) -> dict:
             print(f"Attempting to get resume with id of {resume_id}")
             item = get_item_from_table(
                 resume_id=resume_id,
-                projection_expression="id,company,job_title,job_posting,resume_url,date_created,view_count,resume_state",
+                projection_expression="id,company,job_title,job_posting,resume_url,date_created,view_count,resume_state,no_increment_id",
             )
             ret_body = {}
             if "resume_state" in item.keys():
@@ -332,6 +332,7 @@ def add_resume(*, resume_id: str, company: str, job_title: str, job_posting: str
             resume_url : str
             date_created : str
             view_count : int
+            no_increment_id : str
     """
     ConditionalCheckFailedException = dynamodb_resource.meta.client.exceptions.ConditionalCheckFailedException
 
@@ -339,6 +340,8 @@ def add_resume(*, resume_id: str, company: str, job_title: str, job_posting: str
     current_datetime = datetime.utcnow()
     today = current_datetime.strftime("%Y-%m-%d")
     current_time = current_datetime.strftime("%H:%M")
+
+    no_increment_id = generate_random_string(64)
 
     item = {
         "id": resume_id,
@@ -349,6 +352,7 @@ def add_resume(*, resume_id: str, company: str, job_title: str, job_posting: str
         "resume_state": "normal",
         "resume_url": initial_resume_url,
         "date_created": f"{today} - {current_time}",
+        "no_increment_id": no_increment_id,
     }
 
     try:
@@ -390,6 +394,7 @@ def update_resume(*, resume_id: str, company: str = None, job_title: str = None,
             resume_url : str
             date_created : str
             view_count : int
+            no_increment_id : str
     """
     ret_attributes = {}
     existing_item = get_item_from_table(resume_id=resume_id, projection_expression="id,company,job_title,job_posting")
@@ -427,7 +432,16 @@ def update_resume(*, resume_id: str, company: str = None, job_title: str = None,
         ExpressionAttributeValues=expression_attribute_values,
         ReturnValues="ALL_NEW",
     )
-    required_attributes = ["id", "company", "job_title", "job_posting", "resume_url", "date_created", "view_count"]
+    required_attributes = [
+        "id",
+        "company",
+        "job_title",
+        "job_posting",
+        "resume_url",
+        "date_created",
+        "view_count",
+        "no_increment_id",
+    ]
     if "Attributes" in item.keys() and (
         len(set(item["Attributes"].keys()).intersection(required_attributes)) == len(required_attributes)
     ):
@@ -440,6 +454,7 @@ def update_resume(*, resume_id: str, company: str = None, job_title: str = None,
             "resume_url": item["Attributes"]["resume_url"],
             "date_created": item["Attributes"]["date_created"],
             "view_count": int(item["Attributes"]["view_count"]),
+            "no_increment_id": item["Attributes"]["no_increment_id"],
         }
     else:
         ret_status = 500
@@ -470,10 +485,11 @@ def delete_resume(*, resume_id) -> dict:
             resume_url : str
             date_created : str
             view_count : int
+            no_increment_id : str
     """
     item = get_item_from_table(
         resume_id=resume_id,
-        projection_expression="id,company,job_title,job_posting,resume_url,date_created,view_count,resume_state,invalidate_cache",
+        projection_expression="id,company,job_title,job_posting,resume_url,date_created,view_count,resume_state,no_increment_id,invalidate_cache",
     )
     if item and "resume_state" in item.keys() and item["resume_state"] == "normal":
         s3_object = f'{config["s3_bucket_webpage_resumes_location"]}/{resume_id}.html'
@@ -534,10 +550,11 @@ def undelete_resume(*, resume_id) -> int:
             resume_url : str
             date_created : str
             view_count : int
+            no_increment_id : str
     """
     item = get_item_from_table(
         resume_id=resume_id,
-        projection_expression="id,company,job_title,job_posting,resume_url,date_created,view_count,resume_state,delete_marker_id,invalidate_cache",
+        projection_expression="id,company,job_title,job_posting,resume_url,date_created,view_count,resume_state,delete_marker_id,no_increment_id,invalidate_cache",
     )
     if (
         item
@@ -675,11 +692,11 @@ def list_resumes(deleted: bool = False) -> tuple:
     ------
     tuple
         A Tuple of dicts containing all items with the desired state
-        Each dict will contain up to the following: id, company, job_title, job_posting, and resume_url
+        Each dict will contain up to the following: id, company, job_title, job_posting, resume_url, date_created, view_count, and no_increment_id
     """
     items = []
     resume_state = "deleted" if deleted else "normal"
-    projection_expression = "id,company,job_title,job_posting,resume_url,date_created,view_count"
+    projection_expression = "id,company,job_title,job_posting,resume_url,date_created,view_count,no_increment_id"
     item = resumes_table.query(
         IndexName=config["dynamodb_status_index"],
         ProjectionExpression=projection_expression,
@@ -936,7 +953,7 @@ def get_all_ids_from_table() -> tuple:
 def get_item_from_table(
     *,
     resume_id: str,
-    projection_expression: str = "id,company,job_title,job_posting,resume_url,resume_state,date_created,view_count",
+    projection_expression: str = "id,company,job_title,job_posting,resume_url,resume_state,date_created,view_count,no_increment_id",
 ) -> dict:
     """
     Gets an item with the key of resume_id from the DynamoDB table

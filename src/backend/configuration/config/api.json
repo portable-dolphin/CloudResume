@@ -2100,7 +2100,12 @@
                                     "request_validator": {
                                         "validate_body": true,
                                         "validate_parameters": false
-                                    }
+                                    },
+                                    "query_string_validation": [
+                                        {
+                                            "query_string": "noIncrement"
+                                        }
+                                    ]
                                 },
                                 "integration_request": {
                                     "integration_type": "lambda",

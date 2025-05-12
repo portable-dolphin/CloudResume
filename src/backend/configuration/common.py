@@ -1569,7 +1569,11 @@ def export_cdk_variables(stack: Stack) -> None:
                 export_value = dumps(placeholder_config.value)
             else:
                 export_value = placeholder_config.value
-            stack.export_value(export_value, name=format_export_name(placeholder_name), description=placeholder_name)
+            stack.export_value(
+                export_value,
+                name=format_export_name(f"{placeholder_name}-{env.APP_STACK_PREFIX}"),
+                description=placeholder_name,
+            )
 
 
 def format_export_name(export_name) -> str:

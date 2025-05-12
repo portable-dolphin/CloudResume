@@ -232,7 +232,7 @@
                 "Version": "2012-10-17",
                 "Statement": [
                     {
-                        "Sid": "AllowUpdateOfResumesTable",
+                        "Sid": "AllowGetUpdateOfResumesTable",
                         "Effect": "Allow",
                         "Action": [
                             "dynamodb:UpdateItem"
@@ -262,7 +262,8 @@
                         "Condition": {
                             "ForAllValues:StringEquals": {
                                 "dynamodb:Attributes": [
-                                    "id"
+                                    "id",
+                                    "no_increment_id"
                                 ]
                             }
                         }
@@ -270,7 +271,10 @@
                     {
                         "Sid": "AllowUpdateOfResumeViewsTable",
                         "Effect": "Allow",
-                        "Action": "dynamodb:UpdateItem",
+                        "Action": [
+                            "dynamodb:GetItem",
+                            "dynamodb:UpdateItem"
+                        ],
                         "Resource": "[DYNAMODB_TABLE_RESUME_VIEWS_ARN]",
                         "Condition": {
                             "ForAllValues:StringEquals": {

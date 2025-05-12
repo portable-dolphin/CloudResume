@@ -6,7 +6,9 @@ const apiPath = "/v1/resumes/get-view-count";
 async function updateViewCounter() {
     const htmlFile = window.location.pathname.split("/").slice(-1).join("");
     const resumeId = htmlFile.split(".").slice(0, -1).join(".");
-    const res = await getViewCount(resumeId);
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const res = await getViewCount(resumeId, urlParams.get("noIncrement") ?? "");
     let viewCount = res.views;
     let numberPositions = getNumberPositons(viewCount);
     const positions = ["hundred-thousands", "ten-thousands", "thousands", "hundreds", "tens", "ones"];
@@ -16,8 +18,12 @@ async function updateViewCounter() {
     }
 }
 
-async function getViewCount(resumeId) {
-    const requestUrl = `${apiUrl}${apiPath}`;
+async function getViewCount(resumeId, noIncrement) {
+    var params = "";
+    if (noIncrement) {
+        params = noIncrement ? `?noIncrement=${noIncrement}` : "";
+    }
+    const requestUrl = `${apiUrl}${apiPath}${params}`;
     const requestData = { id: resumeId };
     const requestParams = {
         headers: {
