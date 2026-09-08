@@ -18,7 +18,7 @@ permissions:
   contents: read
 jobs:
   ProdWorkflowBuild:
-    if: github.event.pull_request.merged == true || github.event.workflow_dispatch == true
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/build.yml
     with:
       deploy_env: PROD
