@@ -42,7 +42,7 @@ jobs:
       aws_default_region: ${{ secrets.AWS_DEFAULT_REGION }}
 
   ProdWorkflowTest:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     needs: ProdWorkflowBuild
     uses: ./.github/workflows/test.yml
     with:
@@ -62,7 +62,7 @@ jobs:
       homepage_source_code_url: ${{ secrets.APP_HOMEPAGE_SOURCE_CODE_URL }}
 
   ProdWorkflowSetViewCounter:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: ProdWorkflowTest
     steps:
