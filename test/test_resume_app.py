@@ -592,51 +592,10 @@ class TestResumeApp:
             options.add_argument("--no-sandbox")
             options.add_argument("--start-maximized")
             options.add_argument("--headless=new")
+            options.add_argument("--incognito")
             options.page_load_strategy = "normal"
 
             driver = webdriver.Chrome(options=options)
-            wait = self.get_driver_waiter(driver, timeout=10)
-
-            driver.get("chrome://settings/clearBrowserData")
-            try:
-                wait.until(lambda _: driver.execute_script("return document.readyState") == "complete")
-            except TimeoutException:
-                assert test_outcome_page_load_timeout is None
-            sleep(2)
-            settings_ui_shadow_root = _get_shadow_root(driver, driver.find_element(By.TAG_NAME, "settings-ui"))
-            settings_main_shadow_root = _get_shadow_root(driver, settings_ui_shadow_root.find_element(By.ID, "main"))
-            settings_basic_page_shadow_root = _get_shadow_root(
-                driver, settings_main_shadow_root.find_element(By.CLASS_NAME, "cr-centered-card-container")
-            )
-            basic_page = settings_basic_page_shadow_root.find_element(By.ID, "basicPage")
-            privacy_and_security = [
-                section
-                for section in basic_page.find_elements(By.CSS_SELECTOR, "*")
-                if section.get_attribute("section") == "privacy"
-            ][0]
-            settings_privacy_page_shadow_root = _get_shadow_root(
-                driver, privacy_and_security.find_element(By.CSS_SELECTOR, "*")
-            )
-            settings_clear_browsing_data_dialog = [
-                section
-                for section in settings_privacy_page_shadow_root.find_elements(By.CSS_SELECTOR, "*")
-                if section.get_attribute("tagName").lower() == "settings-clear-browsing-data-dialog"
-            ][0]
-            settings_clear_browsing_data_dialog_shadow_root = _get_shadow_root(
-                driver, settings_clear_browsing_data_dialog
-            )
-            clearBrowsingDataDialog = settings_clear_browsing_data_dialog_shadow_root.find_element(
-                By.ID, "clearBrowsingDataDialog"
-            )
-            clearFromBasic_shadow_root = _get_shadow_root(
-                driver, clearBrowsingDataDialog.find_element(By.ID, "clearFromBasic")
-            )
-
-            select = Select(clearFromBasic_shadow_root.find_element(By.ID, "dropdownMenu"))
-            select.select_by_value("4")
-            delete_data_button = clearBrowsingDataDialog.find_element(By.ID, "clearButton")
-            delete_data_button.click()
-
         elif driver_name == "edge":
             check = check_if_browser_installed(edge=True)
             if not check:
@@ -645,11 +604,12 @@ class TestResumeApp:
             options.add_argument("--no-sandbox")
             options.add_argument("--start-maximized")
             options.add_argument("--headless=new")
+            options.add_argument("--incognito")
             options.page_load_strategy = "normal"
 
             driver = webdriver.Edge(options=options)
-            driver.get("edge://settings/clearBrowserData")
-            driver.find_element(By.ID, "clear-now").send_keys(Keys.ENTER)
+            # driver.get("edge://settings/clearBrowserData")
+            # driver.find_element(By.ID, "clear-now").send_keys(Keys.ENTER)
         elif driver_name == "firefox":
             check = check_if_browser_installed(firefox=True)
             if not check:
@@ -668,6 +628,7 @@ class TestResumeApp:
             options.add_argument("--no-sandbox")
             options.add_argument("--start-maximized")
             options.add_argument("-headless")
+            options.add_argument("-private-window")
             options.page_load_strategy = "normal"
 
             driver_service = webdriver.FirefoxService(executable_path=which("geckodriver"))
