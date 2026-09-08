@@ -9,79 +9,79 @@ attrs==24.3.0
     #   -r cdk/requirements-dev.in
     #   outcome
     #   trio
-beautifulsoup4==4.13.3
+beautifulsoup4==4.15.0
     # via -r cdk/requirements-dev.in
-boto3==1.37.23
+boto3==1.43.89
     # via -r cdk/requirements-dev.in
-botocore==1.37.23
+botocore==1.43.89
     # via
     #   -r cdk/requirements-dev.in
     #   boto3
     #   s3transfer
-certifi==2025.1.31
+certifi==2026.7.22
     # via
     #   requests
     #   selenium
-charset-normalizer==3.4.1
+charset-normalizer==3.5.1
     # via requests
-exceptiongroup==1.2.2
+exceptiongroup==1.3.1
     # via
     #   pytest
     #   trio
     #   trio-websocket
-execnet==2.1.1
+execnet==2.1.2
     # via pytest-xdist
-filelock==3.18.0
+filelock==3.32.5
     # via -r cdk/requirements-dev.in
-h11==0.14.0
+h11==0.16.0
     # via wsproto
-idna==3.10
+idna==3.19
     # via
     #   requests
     #   trio
-iniconfig==2.0.0
+iniconfig==2.3.0
     # via pytest
-jmespath==1.0.1
+jmespath==1.1.0
     # via
     #   boto3
     #   botocore
 outcome==1.3.0.post0
-    # via trio
-packaging==24.2
+    # via
+    #   trio
+    #   trio-websocket
+packaging==26.3
     # via
     #   pytest
     #   pytest-rerunfailures
-pluggy==1.5.0
+pluggy==1.6.0
+    # via pytest
+pygments==2.21.0
     # via pytest
 pysocks==1.7.1
     # via urllib3
-pytest==8.3.5
+pytest==9.1.1
     # via
     #   -r cdk/requirements-dev.in
     #   pytest-rerunfailures
     #   pytest-timeout
     #   pytest-xdist
-pytest-rerunfailures==15.0
+pytest-rerunfailures==16.6.1
     # via -r cdk/requirements-dev.in
-pytest-timeout==2.3.1
+pytest-timeout==2.4.0
     # via -r cdk/requirements-dev.in
-pytest-xdist==3.6.1
+pytest-xdist==3.8.0
     # via -r cdk/requirements-dev.in
-python-benedict==0.34.1
+python-benedict==0.38.0
     # via -r cdk/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via botocore
-python-fsutil==0.15.0
-    # via python-benedict
 python-slugify==8.0.4
     # via python-benedict
-requests==2.32.3
-    # via
-    #   -r cdk/requirements-dev.in
-    #   python-benedict
-s3transfer==0.11.4
+requests==2.34.2
+    # via -r cdk/requirements-dev.in
+s3transfer==0.19.2
     # via boto3
-selenium==4.30.0
+selenium==4.48.0
     # via -r cdk/requirements-dev.in
 six==1.17.0
     # via python-dateutil
@@ -89,28 +89,30 @@ sniffio==1.3.1
     # via trio
 sortedcontainers==2.4.0
     # via trio
-soupsieve==2.6
+soupsieve==2.9.2
     # via beautifulsoup4
 text-unidecode==1.3
     # via python-slugify
-tomli==2.2.1
+tomli==2.4.1
     # via pytest
-trio==0.28.0
+trio==0.34.0
     # via
     #   selenium
     #   trio-websocket
-trio-websocket==0.11.1
+trio-websocket==0.12.2
     # via selenium
-typing-extensions==4.12.2
+typing-extensions==4.15.0
     # via
     #   beautifulsoup4
+    #   exceptiongroup
+    #   python-benedict
     #   selenium
-urllib3[socks]==2.3.0
+urllib3[socks]==2.7.0
     # via
     #   botocore
     #   requests
     #   selenium
-websocket-client==1.8.0
+websocket-client==1.9.2
     # via selenium
-wsproto==1.2.0
+wsproto==1.3.2
     # via trio-websocket

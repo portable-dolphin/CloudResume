@@ -9,6 +9,7 @@ on:
       - "src/**"
       - "app.py"
       - "deploy_app.py"
+  workflow_dispatch:
 concurrency:
   group: deployment
   cancel-in-progress: false
